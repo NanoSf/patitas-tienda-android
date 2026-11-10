@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Atributos personalizados de la vista BarChartView (se usan en XML con el prefijo app:). -->
+<resources>
+    <declare-styleable name="BarChartView">
+        <attr name="chartBarColor" format="color" />
+        <attr name="chartHighlightColor" format="color" />
+        <attr name="chartLabelColor" format="color" />
+        <attr name="chartCornerRadius" format="dimension" />
+    </declare-styleable>
+</resources>

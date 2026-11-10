@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Borde de los campos de texto: color del rol con foco, arena sin foco. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="?attr/colorPrimary" android:state_focused="true" />
+    <item android:color="?attr/colorPrimary" android:state_hovered="true" />
+    <item android:color="@color/border_sand" />
+</selector>

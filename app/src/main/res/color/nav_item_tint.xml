@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Color de íconos y textos de la barra inferior y el Drawer: el ítem activo usa el color del rol. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="?attr/colorPrimary" android:state_checked="true" />
+    <item android:color="@color/ink_400" />
+</selector>

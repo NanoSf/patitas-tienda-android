@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Temas de Patitas. Base.Theme.Patitas define superficies, tipografía y estilos por defecto
+    de los componentes; cada rol hereda y solo reemplaza la familia de colores primarios.
+    El tema se asigna por Activity en el AndroidManifest.
+-->
+<resources>
+
+    <style name="Base.Theme.Patitas" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Colores del rol (por defecto: comprador) -->
+        <item name="colorPrimary">@color/buyer_primary</item>
+        <item name="colorPrimaryDark">@color/buyer_primary_dark</item>
+        <item name="colorOnPrimary">@color/on_dark</item>
+        <item name="colorPrimaryContainer">@color/buyer_container</item>
+        <item name="colorOnPrimaryContainer">@color/buyer_primary_dark</item>
+        <item name="colorSecondary">@color/buyer_secondary</item>
+        <item name="colorOnSecondary">@color/on_dark</item>
+        <item name="colorSecondaryContainer">@color/buyer_container</item>
+        <item name="colorTertiary">@color/accent_amber</item>
+
+        <!-- Superficies cálidas en lugar del blanco/gris por defecto -->
+        <item name="android:colorBackground">@color/cream_background</item>
+        <item name="colorSurface">@color/surface_white</item>
+        <item name="colorOnSurface">@color/ink_900</item>
+        <item name="colorOnSurfaceVariant">@color/ink_600</item>
+        <item name="colorOutline">@color/border_sand</item>
+        <item name="colorError">@color/state_error</item>
+
+        <!-- Barras del sistema -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:navigationBarColor">@color/surface_white</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowBackground">@color/cream_background</item>
+
+        <!-- Estilos por defecto de los componentes (definidos en styles.xml) -->
+        <item name="materialButtonStyle">@style/Widget.Patitas.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Patitas.Button.Outlined</item>
+        <item name="textInputStyle">@style/Widget.Patitas.TextInput</item>
+        <item name="materialCardViewStyle">@style/Widget.Patitas.Card</item>
+        <item name="chipStyle">@style/Widget.Patitas.Chip</item>
+        <item name="toolbarStyle">@style/Widget.Patitas.Toolbar</item>
+        <item name="bottomNavigationStyle">@style/Widget.Patitas.BottomNav</item>
+        <item name="extendedFloatingActionButtonStyle">@style/Widget.Patitas.ExtendedFab</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Patitas.Dialog</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- Tema del rol Comprador y de las pantallas comunes -->
+    <style name="Theme.Patitas" parent="Base.Theme.Patitas" />
+
+    <!-- Tema del rol Vendedor: terracota -->
+    <style name="Theme.Patitas.Seller">
+        <item name="colorPrimary">@color/seller_primary</item>
+        <item name="colorPrimaryDark">@color/seller_primary_dark</item>
+        <item name="colorPrimaryContainer">@color/seller_container</item>
+        <item name="colorOnPrimaryContainer">@color/seller_primary_dark</item>
+        <item name="colorSecondary">@color/seller_secondary</item>
+        <item name="colorSecondaryContainer">@color/seller_container</item>
+    </style>
+
+    <!-- Tema del rol Administrador: gris pizarra -->
+    <style name="Theme.Patitas.Admin">
+        <item name="colorPrimary">@color/admin_primary</item>
+        <item name="colorPrimaryDark">@color/admin_primary_dark</item>
+        <item name="colorPrimaryContainer">@color/admin_container</item>
+        <item name="colorOnPrimaryContainer">@color/admin_primary_dark</item>
+        <item name="colorSecondary">@color/admin_secondary</item>
+        <item name="colorSecondaryContainer">@color/admin_container</item>
+    </style>
+
+    <!-- Pantallas de autenticación: fondo crema y barra de estado clara -->
+    <style name="Theme.Patitas.Auth">
+        <item name="android:statusBarColor">@color/cream_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Splash: el fondo de la ventana es el drawable degradado, sin parpadeo blanco -->
+    <style name="Theme.Patitas.Splash">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:statusBarColor">@color/buyer_primary_dark</item>
+        <item name="android:navigationBarColor">@color/buyer_primary</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <!-- Diálogos con esquinas redondeadas y botones del color del rol -->
+    <style name="ThemeOverlay.Patitas.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.Patitas.Large</item>
+    </style>
+</resources>

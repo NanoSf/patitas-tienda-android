@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Paleta de Patitas (guía de estilo del documento técnico, Tabla 15).
+    Cada rol tiene su color primario para distinguir visualmente el modo de uso.
+-->
+<resources>
+    <!-- Rol Comprador y pantallas comunes: verde azulado -->
+    <color name="buyer_primary">#13675F</color>
+    <color name="buyer_primary_dark">#0D4B45</color>
+    <color name="buyer_secondary">#1E8A7E</color>
+    <color name="buyer_container">#D3EDE8</color>
+
+    <!-- Rol Vendedor: naranja terracota -->
+    <color name="seller_primary">#C4561D</color>
+    <color name="seller_primary_dark">#9A4116</color>
+    <color name="seller_secondary">#E07A3A</color>
+    <color name="seller_container">#FBE2D3</color>
+
+    <!-- Rol Administrador: gris pizarra -->
+    <color name="admin_primary">#22303A</color>
+    <color name="admin_primary_dark">#151E25</color>
+    <color name="admin_secondary">#3A4B57</color>
+    <color name="admin_container">#DCE3E8</color>
+
+    <!-- Fondo y superficies -->
+    <color name="cream_background">#FAF6EE</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="surface_soft">#F3EEE3</color>
+    <color name="border_sand">#E4DED2</color>
+
+    <!-- Texto -->
+    <color name="ink_900">#1D2421</color>
+    <color name="ink_600">#56605B</color>
+    <color name="ink_400">#8A928E</color>
+    <color name="on_dark">#FFFFFF</color>
+
+    <!-- Estados (badges de pedidos, pagos, usuarios y productos) -->
+    <color name="state_success">#2E7D4F</color>
+    <color name="state_success_bg">#DDF1E4</color>
+    <color name="state_warning">#C98A06</color>
+    <color name="state_warning_bg">#FBF0D2</color>
+    <color name="state_error">#C0392B</color>
+    <color name="state_error_bg">#F8DEDA</color>
+    <color name="state_info">#1F4E7A</color>
+    <color name="state_info_bg">#DCE8F4</color>
+
+    <!-- Acentos para ilustraciones de producto -->
+    <color name="accent_amber">#E9A23B</color>
+    <color name="accent_star">#F2A93B</color>
+    <color name="tile_brown_start">#8A5A3B</color>
+    <color name="tile_brown_end">#5E3A24</color>
+    <color name="tile_yellow_start">#F2C14E</color>
+    <color name="tile_yellow_end">#E59A2F</color>
+    <color name="tile_red_start">#E07050</color>
+    <color name="tile_red_end">#B8452B</color>
+    <color name="tile_green_start">#6FB07A</color>
+    <color name="tile_green_end">#3F7F4C</color>
+    <color name="tile_blue_start">#6DA8D6</color>
+    <color name="tile_blue_end">#3C6F9E</color>
+
+    <color name="scrim_light">#33FFFFFF</color>
+    <color name="transparent">#00000000</color>
+</resources>

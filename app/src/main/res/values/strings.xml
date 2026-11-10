@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Textos de la aplicación (RNF-USA-04): todos los mensajes están externalizados para
+    mantener el código limpio y facilitar la traducción a otros idiomas (RNF-ESC-04).
+-->
+<resources>
+    <string name="app_name">Patitas</string>
+
+    <!-- ============ Splash y bienvenida ============ -->
+    <string name="splash_tagline">Todo para tu mascota, cerca de ti</string>
+    <string name="splash_version">Versión 1.0.0 · UCompensar</string>
+    <string name="welcome_title">Consiente a tu mascota sin salir de casa</string>
+    <string name="welcome_subtitle">Alimento, snacks, rascadores, ropa y juguetes de las tiendas de tu barrio, con entrega express.</string>
+
+    <!-- ============ Acciones ============ -->
+    <string name="action_login">Iniciar sesión</string>
+    <string name="action_create_account">Crear cuenta</string>
+    <string name="action_guest">Explorar como invitado</string>
+    <string name="action_forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="action_google">Google</string>
+    <string name="action_biometric">Huella</string>
+    <string name="action_send_link">Enviar enlace</string>
+    <string name="action_back_to_login">Volver a iniciar sesión</string>
+    <string name="action_resend">Reenviar enlace</string>
+    <string name="action_activate">Activar</string>
+    <string name="action_not_now">Ahora no</string>
+    <string name="action_understood">Entendido</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_confirm">Confirmar</string>
+    <string name="action_close">Cerrar</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_undo">Deshacer</string>
+    <string name="action_see_all">Ver todo</string>
+    <string name="action_apply">Aplicar</string>
+    <string name="action_add_to_cart">Agregar al carrito</string>
+    <string name="action_view_cart">Ver carrito</string>
+    <string name="action_continue_delivery">Continuar con la entrega</string>
+    <string name="action_explore_catalog">Explorar catálogo</string>
+    <string name="action_use_gps">Usar mi ubicación actual (GPS)</string>
+    <string name="action_go_pay">Ir a pagar · %1$s</string>
+    <string name="action_pay">Pagar %1$s</string>
+    <string name="action_see_orders">Ver mis pedidos</string>
+    <string name="action_keep_shopping">Seguir comprando</string>
+    <string name="action_withdrawal">Solicitar retracto</string>
+    <string name="action_cancel_order">Cancelar pedido</string>
+    <string name="action_change_photo">Cambiar foto</string>
+    <string name="action_notifications">Notificaciones</string>
+    <string name="action_new_product">Nuevo producto</string>
+    <string name="action_pause">Pausar</string>
+    <string name="action_duplicate">Duplicar</string>
+    <string name="action_take_photo">Tomar foto</string>
+    <string name="action_save_draft">Guardar borrador</string>
+    <string name="action_publish">Publicar</string>
+    <string name="action_accept">Aceptar</string>
+    <string name="action_reject">Rechazar</string>
+    <string name="action_mark_shipped">Marcar enviado</string>
+    <string name="action_mark_delivered">Marcar entregado</string>
+    <string name="action_new_user">Nuevo usuario</string>
+    <string name="action_suspend">Suspender</string>
+    <string name="action_reactivate">Reactivar</string>
+    <string name="action_verify">Verificar vendedor</string>
+    <string name="action_delete_user">Eliminar usuario</string>
+    <string name="action_approve">Aprobar</string>
+    <string name="action_republish">Volver a revisar</string>
+    <string name="action_unpublish">Despublicar</string>
+    <string name="action_export_csv">Exportar reporte (CSV)</string>
+
+    <!-- ============ Roles ============ -->
+    <string name="role_buyer">Comprador</string>
+    <string name="role_seller">Vendedor</string>
+    <string name="role_admin">Administrador</string>
+    <string name="role_admin_short">Admin</string>
+    <string name="guest_name">Invitado</string>
+    <string name="guest_email">Sin sesión iniciada</string>
+    <string name="guest_role">Invitado</string>
+
+    <!-- ============ Inicio de sesión ============ -->
+    <string name="login_title">¡Hola de nuevo!</string>
+    <string name="login_subtitle">Ingresa para comprar o gestionar tu tienda.</string>
+    <string name="login_or">o continúa con</string>
+    <string name="login_no_account">¿No tienes cuenta?</string>
+    <string name="demo_title">Cuentas de demostración</string>
+    <string name="demo_hint">Toca un rol para llenar el correo y la contraseña.</string>
+    <string name="google_pending">El inicio con Google se conecta con Firebase Authentication en la siguiente fase.</string>
+
+    <!-- Biometría -->
+    <string name="biometric_title">Ingresar a Patitas</string>
+    <string name="biometric_subtitle">Usa tu huella para continuar</string>
+    <string name="biometric_use_password">Usar contraseña</string>
+    <string name="biometric_offer_title">¿Ingresar con tu huella?</string>
+    <string name="biometric_offer_message">La próxima vez podrás entrar sin escribir la contraseña. Tu huella nunca sale del dispositivo.</string>
+    <string name="biometric_not_enabled">Primero inicia sesión con tu contraseña y activa el ingreso con huella.</string>
+    <string name="biometric_none_enrolled">No hay huellas registradas en este dispositivo. Agrégalas en los ajustes del teléfono.</string>
+    <string name="biometric_no_hardware">Este dispositivo no tiene lector de huella disponible.</string>
+    <string name="biometric_unavailable">La autenticación biométrica no está disponible en este momento.</string>
+    <string name="biometric_enabled">Ingreso con huella activado</string>
+    <string name="biometric_disabled">Ingreso con huella desactivado</string>
+
+    <!-- ============ Registro ============ -->
+    <string name="register_title">Crear cuenta</string>
+    <string name="register_role_question">¿Cómo usarás Patitas?</string>
+    <string name="register_role_buyer">Quiero comprar</string>
+    <string name="register_role_seller">Quiero vender</string>
+    <string name="register_section_account">Datos de la cuenta</string>
+    <string name="register_section_store">Datos de la tienda</string>
+    <string name="register_terms">Acepto los términos y condiciones y autorizo el tratamiento de mis datos personales (Ley 1581 de 2012).</string>
+    <string name="register_marketing">Quiero recibir ofertas y novedades (opcional).</string>
+    <string name="password_helper">Mínimo 10 caracteres con mayúscula, minúscula y número.</string>
+    <string name="document_helper">NIT o cédula. Luego te pediremos el RUT en PDF.</string>
+    <string name="phone_prefix">+57</string>
+
+    <!-- ============ Recuperar contraseña ============ -->
+    <string name="recover_title">Recuperar contraseña</string>
+    <string name="recover_heading">¿Olvidaste tu contraseña?</string>
+    <string name="recover_description">Escribe el correo con el que te registraste y te enviaremos un enlace para crear una nueva.</string>
+    <string name="recover_sent_heading">Revisa tu correo</string>
+    <string name="recover_sent_detail">Si %1$s está registrado, recibirás un enlace para restablecer tu contraseña.</string>
+    <string name="recover_security_note">Por seguridad, el enlace es de un solo uso y vence en 1 hora.</string>
+    <string name="recover_resent">Enviamos un nuevo enlace</string>
+
+    <!-- ============ Campos ============ -->
+    <string name="field_email">Correo electrónico</string>
+    <string name="field_password">Contraseña</string>
+    <string name="field_password_confirm">Confirmar contraseña</string>
+    <string name="field_full_name">Nombre completo</string>
+    <string name="field_phone">Celular</string>
+    <string name="field_store_name">Nombre comercial</string>
+    <string name="field_document">Documento (CC o NIT)</string>
+    <string name="field_coupon">Código de descuento</string>
+    <string name="field_address">Dirección</string>
+    <string name="field_city">Ciudad</string>
+    <string name="field_neighborhood">Barrio</string>
+    <string name="field_delivery_notes">Indicaciones para el domiciliario (opcional)</string>
+    <string name="field_card_number">Número de la tarjeta</string>
+    <string name="field_card_name">Nombre como aparece en la tarjeta</string>
+    <string name="field_card_expiry">Vence (MM/AA)</string>
+    <string name="field_card_cvv">CVV</string>
+    <string name="card_expiry_placeholder">08/29</string>
+    <string name="field_bank">Banco</string>
+    <string name="field_product_name">Nombre del producto</string>
+    <string name="field_category">Categoría</string>
+    <string name="field_species">Especie</string>
+    <string name="field_brand">Marca</string>
+    <string name="field_presentation">Presentación o talla</string>
+    <string name="field_price">Precio</string>
+    <string name="field_stock">Stock</string>
+    <string name="field_ica">Registro ICA</string>
+    <string name="field_description">Descripción</string>
+    <string name="field_reason">Motivo</string>
+    <string name="field_status">Estado</string>
+    <string name="currency_prefix">$</string>
+    <string name="units_suffix">und.</string>
+    <string name="ica_helper">Obligatorio para alimento y snacks. Sube también la foto de la etiqueta.</string>
+    <string name="coupon_helper">Prueba con PELUDO20</string>
+
+    <!-- ============ Errores de validación ============ -->
+    <string name="error_required">Este campo es obligatorio</string>
+    <string name="error_email">Escribe un correo válido</string>
+    <string name="error_email_exists">Ya existe una cuenta con este correo</string>
+    <string name="error_login">Correo o contraseña incorrectos</string>
+    <string name="error_name">Escribe al menos 3 caracteres</string>
+    <string name="error_phone">El celular debe tener 10 dígitos</string>
+    <string name="error_password">La contraseña no cumple los requisitos</string>
+    <string name="error_password_match">Las contraseñas no coinciden</string>
+    <string name="error_document">Escribe un documento válido</string>
+    <string name="error_terms">Debes aceptar los términos y la política de datos</string>
+    <string name="error_card_number">Número de tarjeta inválido</string>
+    <string name="error_card_expiry">Usa el formato MM/AA</string>
+    <string name="error_card_cvv">CVV inválido</string>
+    <string name="error_bank">Selecciona tu banco</string>
+    <string name="error_product_name">Escribe al menos 5 caracteres</string>
+    <string name="error_price">El precio debe ser mayor a 0</string>
+    <string name="error_stock">El stock no puede ser negativo</string>
+    <string name="error_ica">El registro ICA es obligatorio para esta categoría</string>
+    <string name="error_photos">Agrega al menos una foto del producto</string>
+    <string name="error_reason">Escribe un motivo de al menos 10 caracteres</string>
+
+    <!-- ============ Navegación ============ -->
+    <string name="tab_home">Inicio</string>
+    <string name="tab_catalog">Catálogo</string>
+    <string name="tab_cart">Carrito</string>
+    <string name="tab_orders">Pedidos</string>
+    <string name="tab_profile">Perfil</string>
+    <string name="tab_dashboard">Panel</string>
+    <string name="tab_products">Productos</string>
+    <string name="tab_my_store">Mi tienda</string>
+    <string name="tab_users">Usuarios</string>
+    <string name="tab_reports">Reportes</string>
+    <string name="drawer_catalog">Catálogo de productos</string>
+    <string name="drawer_cart">Carrito de compras</string>
+    <string name="drawer_orders">Mis pedidos</string>
+    <string name="drawer_profile">Mi perfil</string>
+    <string name="drawer_my_products">Mis productos</string>
+    <string name="drawer_received_orders">Pedidos recibidos</string>
+    <string name="drawer_seller_profile">Perfil de vendedor</string>
+    <string name="drawer_users">Gestión de usuarios</string>
+    <string name="drawer_products_admin">Gestión de productos</string>
+    <string name="drawer_sales_report">Reporte de ventas</string>
+    <string name="drawer_help">Ayuda</string>
+    <string name="drawer_privacy">Privacidad y datos</string>
+    <string name="drawer_logout">Cerrar sesión</string>
+    <string name="help_message">Escríbenos a ayuda@patitas.co o al WhatsApp 300 555 0000, de lunes a sábado de 8:00 a. m. a 7:00 p. m.</string>
+    <string name="privacy_message">Patitas trata tus datos conforme a la Ley 1581 de 2012. Puedes consultar, actualizar, descargar o eliminar tu información desde tu perfil.</string>
+    <string name="notifications_empty">No tienes notificaciones nuevas</string>
+    <string name="logout_title">¿Cerrar sesión?</string>
+    <string name="logout_message">Tendrás que ingresar de nuevo para comprar o gestionar tu tienda.</string>
+
+    <!-- ============ Comprador: inicio y catálogo ============ -->
+    <string name="home_greeting">Hola, %1$s</string>
+    <string name="home_greeting_guest">Hola, bienvenido</string>
+    <string name="home_location">Entregar en Chapinero, Bogotá</string>
+    <string name="home_categories">Categorías</string>
+    <string name="home_nearby">Tiendas cerca de ti</string>
+    <string name="search_hint">Buscar purina, rascadores…</string>
+    <string name="search_by_image">La búsqueda por imagen abrirá la cámara (CameraX) en la siguiente fase</string>
+    <string name="banner_overline">Semana del peludo</string>
+    <string name="banner_title" formatted="false">Hasta 20 % en purinas y concentrados</string>
+    <string name="banner_code">Usa el código PELUDO20 en tu carrito</string>
+    <string name="banner_snack">Código PELUDO20 listo para usar en el carrito</string>
+    <string name="badge_express">Express</string>
+    <string name="badge_express_3h">Entrega express 3 h</string>
+    <string name="product_meta">%1$s · ★ %2$s</string>
+    <string name="filter_all">Todos</string>
+    <string name="species_dog">Perro</string>
+    <string name="species_cat">Gato</string>
+    <string name="species_other">Otros</string>
+    <string name="catalog_empty_title">Sin resultados</string>
+    <string name="catalog_empty_message">Prueba con otra palabra o quita los filtros.</string>
+
+    <!-- Detalle de producto -->
+    <string name="detail_seller_location">%1$s · %2$s</string>
+    <string name="detail_rating">%1$s (%2$d reseñas)</string>
+    <string name="detail_no_reviews">Producto nuevo, aún sin reseñas</string>
+    <string name="detail_ica">Registro %1$s</string>
+    <string name="detail_presentation">Presentación</string>
+    <string name="detail_description">Descripción</string>
+    <string name="detail_seller_verified">Tienda verificada · responde en 15 min</string>
+    <string name="detail_add_button">Agregar · %1$s</string>
+    <string name="product_out_of_stock">Producto agotado</string>
+
+    <!-- Carrito -->
+    <string name="cart_added">%1$s se agregó al carrito</string>
+    <string name="cart_removed">Se quitó %1$s</string>
+    <string name="cart_max_stock">Solo hay %1$d unidades disponibles</string>
+    <string name="cart_stock_notice">Quedan %1$d unidades de «%2$s». Se reservan por 15 minutos al pagar.</string>
+    <string name="cart_empty_title">Tu carrito está vacío</string>
+    <string name="cart_empty_message">Agrega productos del catálogo para empezar tu compra.</string>
+    <string name="coupon_applied">Cupón aplicado: -$5.000</string>
+    <string name="coupon_invalid">El cupón no es válido o ya venció</string>
+    <string name="summary_subtotal">Subtotal</string>
+    <string name="summary_discount">Descuento</string>
+    <string name="summary_total">Total</string>
+    <string name="summary_total_paid">Total pagado</string>
+    <string name="guest_login_title">Inicia sesión para continuar</string>
+    <string name="guest_login_message">Como invitado puedes explorar el catálogo. Para agregar al carrito y pagar necesitas una cuenta.</string>
+
+    <!-- Entrega y pago -->
+    <string name="checkout_title">Dirección de entrega</string>
+    <string name="checkout_shipping_type">Tipo de envío</string>
+    <string name="shipping_option">%1$s · %2$s\n%3$s</string>
+    <string name="gps_located">Ubicación obtenida (simulada para la demostración)</string>
+    <string name="demo_address">Cra. 13 # 63-27, Apto 402</string>
+    <string name="demo_city">Bogotá D.C.</string>
+    <string name="demo_neighborhood">Chapinero</string>
+    <string name="payment_title">Pasarela de pagos</string>
+    <string name="payment_total_label">Total a pagar</string>
+    <string name="payment_detail">%1$d productos · %2$d tiendas · envío %3$s</string>
+    <string name="payment_method">Método de pago</string>
+    <string name="method_card">Tarjeta crédito o débito</string>
+    <string name="method_pse">PSE</string>
+    <string name="method_nequi">Nequi</string>
+    <string name="method_bancolombia">Botón Bancolombia</string>
+    <string name="method_card_masked">Tarjeta •••• %1$s</string>
+    <string name="payment_card_data">Datos de la tarjeta</string>
+    <string name="payment_pse_data">Pago con PSE</string>
+    <string name="payment_nequi_data">Pago con Nequi</string>
+    <string name="person_natural">Persona natural</string>
+    <string name="person_juridica">Persona jurídica</string>
+    <string name="payment_redirect_note">Te llevaremos al portal del banco para autorizar el pago y luego volverás a Patitas.</string>
+    <string name="payment_security_note">Pago procesado por Wompi. Patitas no almacena los datos de tu tarjeta.</string>
+    <string name="payment_processing">Procesando pago…</string>
+    <string name="result_title">¡Pago aprobado!</string>
+    <string name="result_subtitle">Tu pedido ya está en manos de la tienda. Te avisaremos cada cambio de estado.</string>
+    <string name="result_reference">Referencia</string>
+    <string name="result_method">Método</string>
+    <string name="result_date">Fecha</string>
+    <string name="result_invoice_note">Enviamos el comprobante y la factura electrónica a tu correo.</string>
+
+    <!-- Pedidos -->
+    <string name="order_number">Pedido %1$s</string>
+    <string name="order_buyer">Comprador: %1$s</string>
+    <string name="order_date_method">%1$s · %2$s</string>
+    <string name="orders_empty_title">Aún no hay pedidos</string>
+    <string name="orders_empty_message">Cuando compres, aquí verás el seguimiento de cada pedido.</string>
+    <string name="orders_guest_message">Inicia sesión para ver el historial y el seguimiento de tus pedidos.</string>
+    <string name="tracking_message">Tienda: %1$s\n\n%2$s</string>
+    <string name="tracking_cancelled">Este pedido fue cancelado.</string>
+    <string name="withdrawal_sent">Solicitud de retracto registrada. La tienda te contactará.</string>
+    <string name="order_cancelled">Pedido cancelado</string>
+
+    <!-- ============ Perfil ============ -->
+    <string name="profile_personal_data">Datos personales</string>
+    <string name="profile_document">Documento</string>
+    <string name="profile_not_registered">Sin registrar</string>
+    <string name="profile_addresses">Mis direcciones</string>
+    <string name="profile_address_default">Cra. 13 # 63-27 · Chapinero (predeterminada)</string>
+    <string name="profile_store_data">Mi tienda</string>
+    <string name="profile_schedule">Horario de atención</string>
+    <string name="profile_schedule_value">Lun a sáb · 8:00 a. m. – 7:00 p. m.</string>
+    <string name="profile_dispatch">Punto de despacho (GPS)</string>
+    <string name="profile_dispatch_value">Chapinero, Bogotá</string>
+    <string name="profile_bank">Cuenta de liquidación</string>
+    <string name="profile_bank_value">Bancolombia ahorros •••• 4821</string>
+    <string name="profile_preferences">Preferencias</string>
+    <string name="pref_biometric">Ingresar con huella</string>
+    <string name="pref_notifications">Notificaciones de pedidos</string>
+    <string name="pref_marketing">Ofertas y novedades</string>
+    <string name="profile_privacy">Privacidad</string>
+    <string name="profile_download">Descargar mis datos</string>
+    <string name="profile_download_detail">Copia de tu información personal</string>
+    <string name="profile_delete">Eliminar mi cuenta</string>
+    <string name="profile_delete_detail">Se anonimizan tus datos personales</string>
+    <string name="profile_guest_message">Crea una cuenta o inicia sesión para guardar direcciones, pagar y seguir tus pedidos.</string>
+    <string name="profile_edit_title">Editar datos personales</string>
+    <string name="profile_updated">Datos actualizados</string>
+    <string name="photo_camera_pending">Se abrirá la cámara (CameraX) para tomar tu foto de perfil</string>
+    <string name="addresses_pending">La gestión de direcciones se conecta con Firestore en la siguiente fase</string>
+    <string name="bank_change_note">Cambiar la cuenta exige nueva autenticación y validación del administrador</string>
+    <string name="marketing_on">Recibirás ofertas dentro de los horarios permitidos (Ley 2300 de 2023)</string>
+    <string name="marketing_off">Ya no recibirás ofertas</string>
+    <string name="download_sent">Enviaremos un archivo con tus datos a %1$s</string>
+    <string name="delete_account_title">¿Eliminar tu cuenta?</string>
+    <string name="delete_account_message">Tus datos personales se anonimizarán. Solo se conservan las facturas por obligación legal. Esta acción no se puede deshacer.</string>
+
+    <!-- ============ Vendedor ============ -->
+    <string name="seller_store_status">%1$s · %2$s</string>
+    <string name="seller_stock_alerts">Alertas de stock</string>
+    <string name="seller_stock_ok">Todos tus productos tienen stock suficiente</string>
+    <string name="seller_new_orders">Pedidos nuevos</string>
+    <string name="stock_zero">Sin stock</string>
+    <string name="seller_product_meta">%1$s · %2$s · %3$s</string>
+    <string name="seller_products_empty_title">No hay productos aquí</string>
+    <string name="seller_products_empty_message">Publica tu primer producto con el botón Nuevo producto.</string>
+    <string name="seller_orders_empty_message">Los pedidos de tus clientes aparecerán aquí.</string>
+    <string name="seller_order_detail">Comprador: %1$s\nProductos: %2$s\nPago: %3$s\n\nTotal: %4$s\nComisión Patitas (8 %%): -%5$s\nRecibirás: %6$s</string>
+    <string name="order_status_updated">Pedido %1$s: %2$s</string>
+    <string name="product_duplicated">Producto duplicado; quedó en revisión</string>
+    <string name="product_paused">Producto pausado</string>
+    <string name="product_activated">Producto activo de nuevo</string>
+    <string name="product_deleted">Producto eliminado</string>
+    <string name="delete_product_title">¿Eliminar producto?</string>
+    <string name="delete_product_message">«%1$s» dejará de mostrarse en el catálogo. Si tiene pedidos asociados, se archivará.</string>
+    <string name="form_title_new">Nuevo producto</string>
+    <string name="form_title_edit">Editar producto</string>
+    <string name="form_photos">Fotos del producto</string>
+    <string name="form_photos_hint">De 1 a 6 fotos con buena luz y fondo claro.</string>
+    <string name="form_photo_count">%1$d/%2$d</string>
+    <string name="photo_taken">Foto agregada (simulación de CameraX)</string>
+    <string name="form_section_info">Información</string>
+    <string name="form_section_dispatch">Sede de despacho</string>
+    <string name="form_dispatch_detail">Ubicada por GPS · el comprador solo ve el barrio y la distancia</string>
+    <string name="form_moderation_note">Los cambios de nombre, fotos o categoría vuelven a pasar por moderación.</string>
+
+    <!-- ============ Administrador ============ -->
+    <string name="admin_subtitle">Operación y cumplimiento de Patitas</string>
+    <string name="admin_pending_tasks">Tareas pendientes</string>
+    <string name="admin_recent_activity">Actividad reciente (auditoría)</string>
+    <string name="task_verify_sellers_detail">Revisa RUT y Cámara de Comercio</string>
+    <string name="task_moderate_detail">Registro ICA, fotos y precios</string>
+    <string name="task_report">Reporte de ventas del mes</string>
+    <string name="task_report_detail">Ventas, comisiones y categorías</string>
+    <string name="kpi_active_users">Usuarios activos</string>
+    <string name="kpi_sales_month">Ventas del mes</string>
+    <string name="kpi_in_review">Productos en revisión</string>
+    <string name="kpi_sellers">Vendedores</string>
+    <string name="kpi_new_orders">Pedidos nuevos</string>
+    <string name="kpi_active_products">Productos activos</string>
+    <string name="kpi_rating">Calificación</string>
+    <string name="kpi_total_sales">Ventas totales</string>
+    <string name="kpi_orders">Pedidos</string>
+    <string name="kpi_ticket">Ticket promedio</string>
+    <string name="kpi_commission" formatted="false">Comisión (8 %)</string>
+    <string name="users_search_hint">Buscar por nombre, correo o documento</string>
+    <string name="filter_buyers">Compradores</string>
+    <string name="filter_sellers">Vendedores</string>
+    <string name="filter_admins">Administradores</string>
+    <string name="filter_pending">Por verificar</string>
+    <string name="users_empty_title">Sin usuarios</string>
+    <string name="users_empty_message">No hay usuarios que coincidan con la búsqueda.</string>
+    <string name="user_form_new">Nuevo usuario</string>
+    <string name="user_form_edit">Editar usuario</string>
+    <string name="user_form_id">ID de usuario: %1$d</string>
+    <string name="user_form_new_hint">La cuenta recibirá un correo para crear su contraseña</string>
+    <string name="user_form_data">Datos del usuario</string>
+    <string name="user_form_role">Rol y estado</string>
+    <string name="user_form_audit_note">Los cambios de rol y estado quedan registrados en la auditoría con tu usuario, la fecha y el valor anterior.</string>
+    <string name="admin_role_title">¿Asignar rol de administrador?</string>
+    <string name="admin_role_message">Tendrá acceso a usuarios, pagos y moderación. Deberá activar el segundo factor de autenticación.</string>
+    <string name="suspend_title">Suspender a %1$s</string>
+    <string name="suspend_message">Sus sesiones se cerrarán de inmediato. Los pedidos en curso se conservan.</string>
+    <string name="user_suspended">%1$s fue suspendido</string>
+    <string name="user_reactivated">%1$s fue reactivado</string>
+    <string name="user_verified">%1$s quedó verificado</string>
+    <string name="user_deleted">%1$s fue eliminado</string>
+    <string name="delete_user_title">¿Eliminar usuario?</string>
+    <string name="delete_user_message">Se hará un borrado lógico de %1$s y se anonimizarán sus datos.</string>
+    <string name="moderation_meta">%1$s · %2$s</string>
+    <string name="moderation_empty_title">Todo al día</string>
+    <string name="moderation_empty_message">No hay productos en este estado.</string>
+    <string name="check_photos_ok">✓ Fotos con calidad suficiente</string>
+    <string name="check_price_ok">✓ Precio dentro del rango de la categoría</string>
+    <string name="check_price_warning">⚠ Precio fuera del rango de referencia</string>
+    <string name="check_ica_ok">✓ Registro ICA %1$s</string>
+    <string name="check_ica_missing">⚠ Falta el registro ICA (obligatorio para alimento)</string>
+    <string name="check_words_ok">✓ Sin palabras prohibidas</string>
+    <string name="check_live_animals">⚠ Posible oferta de animales vivos (Ley 1774 de 2016)</string>
+    <string name="product_approved">%1$s aprobado y publicado</string>
+    <string name="product_rejected">%1$s rechazado; se notificó al vendedor</string>
+    <string name="reject_title">Rechazar producto</string>
+    <string name="unpublish_title">Despublicar producto</string>
+    <string name="reject_message">El comentario se enviará a %1$s.</string>
+    <string name="period_week">Semana</string>
+    <string name="period_month">Mes</string>
+    <string name="period_year">Año</string>
+    <string name="report_chart_caption">El periodo actual se resalta en ámbar</string>
+    <string name="report_by_category">Ventas por categoría (mes)</string>
+    <string name="report_top_sellers">Mejores vendedores (mes)</string>
+    <string name="export_done">Reporte exportado; los correos y documentos van enmascarados</string>
+
+    <!-- ============ Accesibilidad (contentDescription) ============ -->
+    <string name="cd_open_menu">Abrir menú</string>
+    <string name="cd_back">Volver</string>
+    <string name="cd_favorite">Agregar a favoritos</string>
+    <string name="cd_increase">Aumentar cantidad</string>
+    <string name="cd_decrease">Disminuir cantidad</string>
+    <string name="cd_more_actions">Más acciones</string>
+    <string name="cd_search_by_image">Buscar por imagen</string>
+</resources>

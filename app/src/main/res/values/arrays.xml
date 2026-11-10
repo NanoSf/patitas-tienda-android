@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Listas fijas (string-array) y textos con plural (plurals). -->
+<resources>
+    <!-- Bancos del menú desplegable de PSE -->
+    <string-array name="pse_banks">
+        <item>Bancolombia</item>
+        <item>Banco de Bogotá</item>
+        <item>Davivienda</item>
+        <item>BBVA Colombia</item>
+        <item>Banco de Occidente</item>
+        <item>Banco Popular</item>
+        <item>Banco AV Villas</item>
+        <item>Scotiabank Colpatria</item>
+        <item>Nu Colombia</item>
+    </string-array>
+
+    <!-- Filtros del historial de pedidos del comprador -->
+    <string-array name="buyer_order_filters">
+        <item>Todos</item>
+        <item>En curso</item>
+        <item>Entregados</item>
+        <item>Cancelados</item>
+    </string-array>
+
+    <!-- Títulos del gráfico según el periodo (semana, mes, año) -->
+    <string-array name="report_chart_titles">
+        <item>Ventas de los últimos 7 días</item>
+        <item>Ventas de los últimos 6 meses</item>
+        <item>Ventas por año</item>
+    </string-array>
+
+    <!-- Registro de auditoría de ejemplo: acción|hora -->
+    <string-array name="audit_log">
+        <item>Einer A. aprobó «Snacks dentales para perro»|10:42</item>
+        <item>Einer A. suspendió a Andrés Pérez (contracargos)|09:15</item>
+        <item>Ropa Peluda envió documentos para verificación|Ayer</item>
+        <item>Reversión PT-1012 aprobada dentro del plazo legal|Ayer</item>
+    </string-array>
+
+    <plurals name="catalog_results">
+        <item quantity="one">%d producto encontrado</item>
+        <item quantity="other">%d productos encontrados</item>
+    </plurals>
+    <plurals name="detail_stock">
+        <item quantity="one">Queda %d unidad</item>
+        <item quantity="other">%d unidades disponibles</item>
+    </plurals>
+    <plurals name="order_summary">
+        <item quantity="one">%1$d producto · %2$s</item>
+        <item quantity="other">%1$d productos · %2$s</item>
+    </plurals>
+    <plurals name="orders_count">
+        <item quantity="one">%d pedido</item>
+        <item quantity="other">%d pedidos</item>
+    </plurals>
+    <plurals name="products_count">
+        <item quantity="one">%d producto</item>
+        <item quantity="other">%d productos</item>
+    </plurals>
+    <plurals name="stock_units">
+        <item quantity="one">%d und.</item>
+        <item quantity="other">%d und.</item>
+    </plurals>
+    <plurals name="users_count">
+        <item quantity="one">%d usuario</item>
+        <item quantity="other">%d usuarios</item>
+    </plurals>
+    <plurals name="summary_shipping">
+        <item quantity="one">Envío (%d tienda)</item>
+        <item quantity="other">Envío (%d tiendas)</item>
+    </plurals>
+    <plurals name="task_verify_sellers">
+        <item quantity="one">%d vendedor por verificar</item>
+        <item quantity="other">%d vendedores por verificar</item>
+    </plurals>
+    <plurals name="task_moderate">
+        <item quantity="one">%d producto por moderar</item>
+        <item quantity="other">%d productos por moderar</item>
+    </plurals>
+</resources>
