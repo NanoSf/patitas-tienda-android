@@ -45,7 +45,7 @@ sleep 0.9; adb exec-out screencap -p > shots/t01_splash.png
 sleep 3; shot t02_bienvenida
 tap "Crear cuenta"; shot t05_registro
 tap "Quiero vender"; shot t06_registro_vendedor
-back; back
+back
 tap "Iniciar sesión"; shot t03_login
 tap "¿Olvidaste tu contraseña?"; shot t07_recuperar
 back
