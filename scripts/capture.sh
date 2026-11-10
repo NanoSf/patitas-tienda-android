@@ -27,6 +27,8 @@ login() { tap "Iniciar sesión"; tap "$1"; tap "Iniciar sesión" last; sleep 2; 
 logout() { tap "Abrir menú"; tap "Cerrar sesión"; tap "Cerrar sesión" last; sleep 2; }
 
 adb shell settings put global hide_error_dialogs 1
+adb shell pm disable-user --user 0 com.google.android.apps.nexuslauncher >/dev/null 2>&1 || true
+sleep 5
 adb install -r Patitas_v1.0.0.apk
 sleep 15
 # Barra de estado limpia (modo demostración)
