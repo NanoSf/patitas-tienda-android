@@ -4,6 +4,9 @@ Aplicación nativa Android (Kotlin + vistas XML con Material Components) de un *
 Proyecto académico de **Desarrollo de Aplicaciones Móviles Nativas** — Fundación Universitaria Compensar (UCompensar).
 Autor: **Einer Fabian Aponte Cubides**.
 
+🎥 **Video explicativo:** https://youtu.be/znGFyRGXpa0  
+📦 **APK:** [Releases v1.0.0](https://github.com/NanoSf/patitas-tienda-android/releases/tag/v1.0.0)
+
 ## Alcance de esta entrega (Actividad 3: frontend)
 
 Interfaces gráficas completas para los tres roles definidos en la Actividad 2. Los datos son de demostración, en memoria (`PatitasRepository`). La integración con Firebase y Wompi corresponde a la siguiente fase.
