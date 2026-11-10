@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Barra inferior del Vendedor: 4 pestañas. -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/tab_seller_dashboard" android:icon="@drawable/ic_dashboard" android:title="@string/tab_dashboard" />
+    <item android:id="@+id/tab_seller_products" android:icon="@drawable/ic_inventory" android:title="@string/tab_products" />
+    <item android:id="@+id/tab_seller_orders" android:icon="@drawable/ic_orders" android:title="@string/tab_orders" />
+    <item android:id="@+id/tab_seller_profile" android:icon="@drawable/ic_store" android:title="@string/tab_my_store" />
+</menu>

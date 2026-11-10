@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Detalle de producto (C-02): imagen, distintivos, vendedor, precio, cantidad, presentaciones y descripción. -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/frameHero"
+                android:layout_width="match_parent"
+                android:layout_height="280dp">
+
+                <ImageView
+                    android:id="@+id/imageProduct"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    app:tint="@color/cream_background" />
+
+                <ImageButton
+                    android:id="@+id/buttonBack"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_margin="@dimen/space_l"
+                    android:background="@drawable/bg_circle_white"
+                    android:contentDescription="@string/cd_back"
+                    android:src="@drawable/ic_arrow_back"
+                    app:tint="@color/ink_900" />
+
+                <ImageButton
+                    android:id="@+id/buttonFavorite"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="end"
+                    android:layout_margin="@dimen/space_l"
+                    android:background="@drawable/bg_circle_white"
+                    android:contentDescription="@string/cd_favorite"
+                    android:src="@drawable/ic_favorite"
+                    app:tint="@color/ink_400" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/screen_padding">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textBadgeExpress"
+                        style="@style/Widget.Patitas.Badge"
+                        android:layout_marginEnd="@dimen/space_s"
+                        android:text="@string/badge_express_3h" />
+
+                    <TextView
+                        android:id="@+id/textBadgeIca"
+                        style="@style/Widget.Patitas.Badge" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:textAppearance="@style/TextAppearance.Patitas.Headline" />
+
+                <TextView
+                    android:id="@+id/textSellerLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:drawablePadding="@dimen/space_xs"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.Patitas.Body"
+                    app:drawableStartCompat="@drawable/ic_location"
+                    app:drawableTint="@color/ink_400" />
+
+                <TextView
+                    android:id="@+id/textRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:drawablePadding="@dimen/space_xs"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.Patitas.Body"
+                    app:drawableStartCompat="@drawable/ic_star"
+                    app:drawableTint="@color/accent_star" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_l"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textPrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <include
+                        android:id="@+id/stepper"
+                        layout="@layout/view_stepper" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textStock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Patitas.Caption" />
+
+                <TextView
+                    style="@style/Widget.Patitas.SectionTitle"
+                    android:layout_marginTop="@dimen/space_l"
+                    android:text="@string/detail_presentation" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupVariants"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true" />
+
+                <TextView
+                    style="@style/Widget.Patitas.SectionTitle"
+                    android:text="@string/detail_description" />
+
+                <TextView
+                    android:id="@+id/textDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Patitas.Body" />
+
+                <!-- Vendedor verificado (Ley 1480: identificación del vendedor) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardSeller"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_l">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/space_m">
+
+                        <TextView
+                            android:id="@+id/textSellerInitials"
+                            android:layout_width="@dimen/avatar_m"
+                            android:layout_height="@dimen/avatar_m"
+                            android:background="@drawable/bg_avatar"
+                            android:gravity="center"
+                            android:textColor="@color/on_dark"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_m"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/textSellerName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/ink_900"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/detail_seller_verified"
+                                android:textAppearance="@style/TextAppearance.Patitas.Caption" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_m"
+                            android:layout_height="@dimen/icon_m"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_verified"
+                            app:tint="?attr/colorPrimary" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_bar"
+        android:orientation="horizontal"
+        android:padding="@dimen/space_l"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_cart" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Selector de cantidad reutilizable: botón menos, cantidad y botón más. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp"
+    android:background="@drawable/bg_stepper"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/buttonMinus"
+        android:layout_width="36dp"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_decrease"
+        android:src="@drawable/ic_remove"
+        app:tint="@color/ink_900" />
+
+    <TextView
+        android:id="@+id/textQuantity"
+        android:layout_width="28dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/ink_900"
+        android:textSize="@dimen/text_subtitle"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/buttonPlus"
+        android:layout_width="36dp"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_increase"
+        android:src="@drawable/ic_add"
+        app:tint="?attr/colorPrimary" />
+</LinearLayout>

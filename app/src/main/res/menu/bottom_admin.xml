@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Barra inferior del Administrador: 4 pestañas. -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/tab_admin_dashboard" android:icon="@drawable/ic_dashboard" android:title="@string/tab_dashboard" />
+    <item android:id="@+id/tab_admin_users" android:icon="@drawable/ic_group" android:title="@string/tab_users" />
+    <item android:id="@+id/tab_admin_products" android:icon="@drawable/ic_inventory" android:title="@string/tab_products" />
+    <item android:id="@+id/tab_admin_reports" android:icon="@drawable/ic_report" android:title="@string/tab_reports" />
+</menu>

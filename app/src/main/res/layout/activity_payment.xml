@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Pasarela de pagos (C-05): total, método (tarjeta, PSE, Nequi, Botón Bancolombia) y formulario
+    según el método. Los datos de la tarjeta se tokenizan con el SDK de Wompi (PCI DSS).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/payment_title" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:indicatorColor="@color/accent_amber" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
+
+            <!-- Total a pagar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_header"
+                android:orientation="vertical"
+                android:padding="@dimen/space_l">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payment_total_label"
+                    android:textAppearance="@style/TextAppearance.Patitas.Overline"
+                    android:textColor="@color/buyer_container" />
+
+                <TextView
+                    android:id="@+id/textTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/on_dark"
+                    android:textSize="@dimen/text_display"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/buyer_container"
+                    android:textSize="@dimen/text_caption" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/Widget.Patitas.SectionTitle"
+                android:text="@string/payment_method" />
+
+            <RadioGroup
+                android:id="@+id/radioMethod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checkedButton="@id/radioCard">
+
+                <RadioButton
+                    android:id="@+id/radioCard"
+                    style="@style/Widget.Patitas.PaymentOption"
+                    android:text="@string/method_card"
+                    app:drawableStartCompat="@drawable/ic_credit_card" />
+
+                <RadioButton
+                    android:id="@+id/radioPse"
+                    style="@style/Widget.Patitas.PaymentOption"
+                    android:text="@string/method_pse"
+                    app:drawableStartCompat="@drawable/ic_bank" />
+
+                <RadioButton
+                    android:id="@+id/radioNequi"
+                    style="@style/Widget.Patitas.PaymentOption"
+                    android:text="@string/method_nequi"
+                    app:drawableStartCompat="@drawable/ic_smartphone" />
+
+                <RadioButton
+                    android:id="@+id/radioBancolombia"
+                    style="@style/Widget.Patitas.PaymentOption"
+                    android:text="@string/method_bancolombia"
+                    app:drawableStartCompat="@drawable/ic_bank" />
+            </RadioGroup>
+
+            <!-- Formulario de tarjeta -->
+            <LinearLayout
+                android:id="@+id/groupCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Widget.Patitas.SectionTitle"
+                    android:text="@string/payment_card_data" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputCardNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/field_card_number"
+                    app:startIconDrawable="@drawable/ic_credit_card">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="creditCardNumber"
+                        android:inputType="number"
+                        android:maxLength="19" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputCardName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:hint="@string/field_card_name">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapCharacters" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/inputCardExpiry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/space_s"
+                        android:layout_weight="1"
+                        android:hint="@string/field_card_expiry"
+                        app:placeholderText="@string/card_expiry_placeholder">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="date"
+                            android:maxLength="5" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/inputCardCvv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_s"
+                        android:layout_weight="1"
+                        android:hint="@string/field_card_cvv"
+                        app:endIconMode="password_toggle">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberPassword"
+                            android:maxLength="4" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- PSE: banco desde un menú desplegable (string-array banks) -->
+            <LinearLayout
+                android:id="@+id/groupPse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/Widget.Patitas.SectionTitle"
+                    android:text="@string/payment_pse_data" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputBank"
+                    style="@style/Widget.Patitas.TextInput.Dropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/field_bank">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/dropdownBank"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:paddingStart="@dimen/space_l"
+                        android:paddingEnd="@dimen/space_l" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/togglePersonType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    app:checkedButton="@id/buttonNatural"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonNatural"
+                        style="@style/Widget.Patitas.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/person_natural" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonJuridica"
+                        style="@style/Widget.Patitas.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/person_juridica" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+            </LinearLayout>
+
+            <!-- Nequi: número de celular -->
+            <LinearLayout
+                android:id="@+id/groupNequi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/Widget.Patitas.SectionTitle"
+                    android:text="@string/payment_nequi_data" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputNequiPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/field_phone"
+                    app:prefixText="@string/phone_prefix"
+                    app:startIconDrawable="@drawable/ic_smartphone">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone"
+                        android:maxLength="10" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textRedirect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:background="@drawable/bg_notice_info"
+                android:padding="@dimen/space_m"
+                android:text="@string/payment_redirect_note"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="@dimen/text_caption"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:drawablePadding="@dimen/space_s"
+                android:gravity="center_vertical"
+                android:text="@string/payment_security_note"
+                android:textAppearance="@style/TextAppearance.Patitas.Caption"
+                app:drawableStartCompat="@drawable/ic_shield"
+                app:drawableTint="@color/state_success" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_bar"
+        android:padding="@dimen/space_l">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonPay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_lock" />
+    </LinearLayout>
+</LinearLayout>

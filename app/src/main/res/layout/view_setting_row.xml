@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fila de opción del perfil: ícono, título, detalle y flecha. Se incluye varias veces. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="56dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_l"
+    android:paddingEnd="@dimen/space_m">
+
+    <ImageView
+        android:id="@+id/imageRowIcon"
+        android:layout_width="@dimen/icon_m"
+        android:layout_height="@dimen/icon_m"
+        android:importantForAccessibility="no"
+        app:tint="?attr/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_l"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingVertical="@dimen/space_s">
+
+        <TextView
+            android:id="@+id/textRowTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/ink_900"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/textRowDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Patitas.Caption" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageRowChevron"
+        android:layout_width="@dimen/icon_m"
+        android:layout_height="@dimen/icon_m"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_chevron_right"
+        app:tint="@color/ink_400" />
+</LinearLayout>

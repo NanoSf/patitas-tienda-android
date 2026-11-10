@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Menú lateral del Comprador. Los ids de las pestañas son los mismos de la barra inferior. -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_main" android:checkableBehavior="single">
+        <item android:id="@+id/tab_home" android:icon="@drawable/ic_home" android:title="@string/tab_home" />
+        <item android:id="@+id/tab_catalog" android:icon="@drawable/ic_category" android:title="@string/drawer_catalog" />
+        <item android:id="@+id/tab_cart" android:icon="@drawable/ic_cart" android:title="@string/drawer_cart" />
+        <item android:id="@+id/tab_orders" android:icon="@drawable/ic_orders" android:title="@string/drawer_orders" />
+        <item android:id="@+id/tab_profile" android:icon="@drawable/ic_person" android:title="@string/drawer_profile" />
+    </group>
+    <group android:id="@+id/group_support">
+        <item android:id="@+id/nav_help" android:icon="@drawable/ic_help" android:title="@string/drawer_help" />
+        <item android:id="@+id/nav_privacy" android:icon="@drawable/ic_shield" android:title="@string/drawer_privacy" />
+        <item android:id="@+id/nav_logout" android:icon="@drawable/ic_logout" android:title="@string/drawer_logout" />
+    </group>
+</menu>

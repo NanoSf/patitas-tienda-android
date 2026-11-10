@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dirección de entrega (C-04): mapa, ubicación por GPS, dirección y tipo de envío. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/checkout_title" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
+
+            <!-- Mapa ilustrado (layer-list) con el pin centrado -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:background="@drawable/bg_map">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_location"
+                    app:tint="@color/state_error" />
+
+                <ImageButton
+                    android:id="@+id/buttonMyLocation"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="@dimen/space_m"
+                    android:background="@drawable/bg_circle_white"
+                    android:contentDescription="@string/action_use_gps"
+                    android:src="@drawable/ic_my_location"
+                    app:tint="?attr/colorPrimary" />
+            </FrameLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonGps"
+                style="@style/Widget.Patitas.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:text="@string/action_use_gps"
+                app:icon="@drawable/ic_my_location" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:hint="@string/field_address"
+                app:startIconDrawable="@drawable/ic_location">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="postalAddress"
+                    android:inputType="textPostalAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputCity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_s"
+                    android:layout_weight="1"
+                    android:hint="@string/field_city">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputNeighborhood"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_s"
+                    android:layout_weight="1"
+                    android:hint="@string/field_neighborhood">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:hint="@string/field_delivery_notes">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/Widget.Patitas.SectionTitle"
+                android:text="@string/checkout_shipping_type" />
+
+            <!-- Opciones con fondo selector (bg_option) e indicador personalizado (radio_indicator) -->
+            <RadioGroup
+                android:id="@+id/radioShipping"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checkedButton="@id/radioStandard">
+
+                <RadioButton
+                    android:id="@+id/radioStandard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_option"
+                    android:button="@null"
+                    android:drawablePadding="@dimen/space_m"
+                    android:padding="@dimen/space_l"
+                    android:textColor="@color/ink_900"
+                    app:drawableStartCompat="@drawable/radio_indicator" />
+
+                <RadioButton
+                    android:id="@+id/radioExpress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:background="@drawable/bg_option"
+                    android:button="@null"
+                    android:drawablePadding="@dimen/space_m"
+                    android:padding="@dimen/space_l"
+                    android:textColor="@color/ink_900"
+                    app:drawableStartCompat="@drawable/radio_indicator" />
+            </RadioGroup>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_bar"
+        android:padding="@dimen/space_l">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonPay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>
