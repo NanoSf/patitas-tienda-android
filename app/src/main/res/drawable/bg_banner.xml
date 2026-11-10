@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Banner promocional: degradado naranja con esquinas de 18 dp. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="@dimen/radius_l" />
+    <gradient
+        android:angle="0"
+        android:startColor="@color/seller_primary"
+        android:endColor="@color/seller_secondary" />
+</shape>

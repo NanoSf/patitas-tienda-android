@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cabecera de color del rol con esquinas inferiores curvas. ?attr/colorPrimary cambia según el tema. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners
+        android:bottomLeftRadius="@dimen/radius_xl"
+        android:bottomRightRadius="@dimen/radius_xl" />
+    <gradient
+        android:angle="315"
+        android:startColor="?attr/colorPrimary"
+        android:endColor="?attr/colorSecondary" />
+</shape>

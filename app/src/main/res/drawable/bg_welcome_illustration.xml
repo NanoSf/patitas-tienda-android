@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ilustración de bienvenida: círculos concéntricos (layer-list con insets) y la huella al centro. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/buyer_container" />
+        </shape>
+    </item>
+    <item android:bottom="26dp" android:left="26dp" android:right="26dp" android:top="26dp">
+        <shape android:shape="oval">
+            <solid android:color="#A9D9D0" />
+        </shape>
+    </item>
+    <item android:bottom="52dp" android:left="52dp" android:right="52dp" android:top="52dp">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="315"
+                android:startColor="@color/buyer_secondary"
+                android:endColor="@color/buyer_primary" />
+        </shape>
+    </item>
+    <item
+        android:width="64dp"
+        android:height="64dp"
+        android:drawable="@drawable/ic_pets_white"
+        android:gravity="center" />
+</layer-list>

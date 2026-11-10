@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Caja de aviso (stock reservado, plazos legales). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="@dimen/radius_m" />
+    <solid android:color="@color/state_warning_bg" />
+</shape>
