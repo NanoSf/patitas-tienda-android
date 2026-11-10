@@ -13,3 +13,4 @@
 *.jks
 *.keystore
 build.log
+tools/
