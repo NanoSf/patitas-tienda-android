@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import androidx.core.content.ContextCompat
 import co.patitas.tienda.R
@@ -34,7 +35,6 @@ class BarChartView @JvmOverloads constructor(
 
     init {
         val density = resources.displayMetrics.density
-        val scaled = resources.displayMetrics.scaledDensity
         val a = context.obtainStyledAttributes(attrs, R.styleable.BarChartView, defStyleAttr, 0)
         barPaint.color = a.getColor(R.styleable.BarChartView_chartBarColor, ContextCompat.getColor(context, R.color.buyer_primary))
         highlightPaint.color = a.getColor(R.styleable.BarChartView_chartHighlightColor, ContextCompat.getColor(context, R.color.accent_amber))
@@ -42,15 +42,19 @@ class BarChartView @JvmOverloads constructor(
         cornerRadius = a.getDimension(R.styleable.BarChartView_chartCornerRadius, 6 * density)
         a.recycle()
 
-        labelPaint.textSize = 11 * scaled
+        labelPaint.textSize = sp(11f)
         labelPaint.textAlign = Paint.Align.CENTER
         valuePaint.color = ContextCompat.getColor(context, R.color.ink_900)
-        valuePaint.textSize = 10 * scaled
+        valuePaint.textSize = sp(10f)
         valuePaint.textAlign = Paint.Align.CENTER
         valuePaint.isFakeBoldText = true
         gridPaint.color = ContextCompat.getColor(context, R.color.border_sand)
         gridPaint.strokeWidth = density
     }
+
+    /** Convierte sp a píxeles respetando el tamaño de fuente elegido por el usuario. */
+    private fun sp(value: Float) =
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics)
 
     fun setData(data: List<SalesPoint>) {
         points = data

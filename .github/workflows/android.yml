@@ -1,10 +1,14 @@
-# Compila el APK en cada push a main y lo publica como artefacto descargable.
+# Compila el APK en cada push a main, lo guarda como artefacto
+# y lo publica en la sección Releases del repositorio (v1.0.0).
 name: Android CI
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -24,8 +28,20 @@ jobs:
       - name: Compilar APK (assembleDebug)
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Publicar APK
+      - name: Renombrar APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk Patitas_v1.0.0.apk
+
+      - name: Publicar APK como artefacto
         uses: actions/upload-artifact@v4
         with:
           name: Patitas-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: Patitas_v1.0.0.apk
+
+      - name: Publicar APK en Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: Patitas v1.0.0 (Actividad 3 - interfaces gráficas)
+          body: APK de validación (debug) con las interfaces de los roles Comprador, Vendedor y Administrador. Cuentas de demostración en el README.
+          files: Patitas_v1.0.0.apk
+          make_latest: true
