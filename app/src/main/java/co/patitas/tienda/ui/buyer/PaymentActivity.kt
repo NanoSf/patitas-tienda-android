@@ -34,7 +34,10 @@ class PaymentActivity : AppCompatActivity() {
         val repo = PatitasRepository
         binding.textTotal.text = Format.money(repo.cartTotal())
         binding.textDetail.text = getString(
-            R.string.payment_detail, repo.cartCount(), repo.cartStores(), repo.selectedShipping.label
+            R.string.payment_detail,
+            resources.getQuantityString(R.plurals.payment_products, repo.cartCount(), repo.cartCount()),
+            resources.getQuantityString(R.plurals.payment_stores, repo.cartStores(), repo.cartStores()),
+            repo.selectedShipping.label
         )
         binding.buttonPay.text = getString(R.string.action_pay, Format.money(repo.cartTotal()))
 

@@ -77,4 +77,12 @@
         <item quantity="one">%d producto por moderar</item>
         <item quantity="other">%d productos por moderar</item>
     </plurals>
+    <plurals name="payment_products">
+        <item quantity="one">%d producto</item>
+        <item quantity="other">%d productos</item>
+    </plurals>
+    <plurals name="payment_stores">
+        <item quantity="one">%d tienda</item>
+        <item quantity="other">%d tiendas</item>
+    </plurals>
 </resources>

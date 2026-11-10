@@ -266,7 +266,7 @@
     <string name="demo_neighborhood">Chapinero</string>
     <string name="payment_title">Pasarela de pagos</string>
     <string name="payment_total_label">Total a pagar</string>
-    <string name="payment_detail">%1$d productos · %2$d tiendas · envío %3$s</string>
+    <string name="payment_detail">%1$s · %2$s · envío %3$s</string>
     <string name="payment_method">Método de pago</string>
     <string name="method_card">Tarjeta crédito o débito</string>
     <string name="method_pse">PSE</string>
