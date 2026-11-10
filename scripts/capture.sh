@@ -4,10 +4,17 @@ set -u
 mkdir -p shots
 PKG=co.patitas.tienda
 shot() { sleep 1.2; adb exec-out screencap -p > "shots/$1.png"; echo "captura $1"; }
+dismiss_anr() {
+  if python3 scripts/find_node.py /tmp/ui.xml "Wait" >/dev/null 2>&1; then
+    adb shell input tap $(python3 scripts/find_node.py /tmp/ui.xml "Wait"); sleep 1
+    adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; adb pull /sdcard/ui.xml /tmp/ui.xml >/dev/null 2>&1
+  fi
+}
 tap() {
   for i in 1 2 3 4 5; do
     adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
     adb pull /sdcard/ui.xml /tmp/ui.xml >/dev/null 2>&1
+    dismiss_anr
     if pos=$(python3 scripts/find_node.py /tmp/ui.xml "$1" "${2:-}"); then
       adb shell input tap $pos; sleep 1.5; return 0
     fi
@@ -19,7 +26,9 @@ back() { adb shell input keyevent 4; sleep 1.2; }
 login() { tap "Iniciar sesión"; tap "$1"; tap "Iniciar sesión" last; sleep 2; }
 logout() { tap "Abrir menú"; tap "Cerrar sesión"; tap "Cerrar sesión" last; sleep 2; }
 
+adb shell settings put global hide_error_dialogs 1
 adb install -r Patitas_v1.0.0.apk
+sleep 15
 # Barra de estado limpia (modo demostración)
 adb shell settings put global sysui_demo_allowed 1
 adb shell am broadcast -a com.android.systemui.demo -e command enter >/dev/null
