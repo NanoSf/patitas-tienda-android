@@ -3,8 +3,11 @@
 # "capturas-v2" del repositorio. Se usa para el manual de usuario.
 name: Capturas de pantalla
 
+# Se ejecuta a mano o al subir cambios a la rama "capturas-run".
 on:
   workflow_dispatch:
+  push:
+    branches: [ capturas-run ]
 
 permissions:
   contents: write
