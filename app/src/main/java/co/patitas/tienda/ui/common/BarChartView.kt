@@ -56,12 +56,14 @@ class BarChartView @JvmOverloads constructor(
     private fun sp(value: Float) =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics)
 
+    /** Recibe los puntos del gráfico y lo vuelve a dibujar. */
     fun setData(data: List<SalesPoint>) {
         points = data
         contentDescription = data.joinToString { it.label + ": " + Format.moneyShort(it.value) }
         invalidate()
     }
 
+    /** Dibuja las líneas guía, las barras, sus valores y etiquetas con Canvas. */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (points.isEmpty()) return

@@ -17,9 +17,12 @@ object Format {
         else -> money(value)
     }
 
+    /** Número entero con separador de miles. */
     fun number(value: Int): String = number.format(value)
 
+    /** Calificación con un decimal. */
     fun rating(value: Double): String = String.format(Locale("es", "CO"), "%.1f", value)
 
+    /** Distancia en kilómetros. */
     fun distance(km: Double): String = String.format(Locale("es", "CO"), "a %.1f km", km)
 }

@@ -15,10 +15,12 @@ fun TextView.applyStatus(style: StatusStyle) {
     backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, style.bg))
 }
 
+/** Muestra un mensaje breve (Snackbar) en la parte inferior. */
 fun View.snack(message: CharSequence) {
     Snackbar.make(this, message, Snackbar.LENGTH_SHORT).show()
 }
 
+/** Muestra un mensaje breve (Snackbar) en la parte inferior. */
 fun View.snack(messageRes: Int) {
     Snackbar.make(this, messageRes, Snackbar.LENGTH_SHORT).show()
 }
@@ -33,6 +35,7 @@ fun TextInputLayout.validate(valid: Boolean, errorText: String): Boolean {
     return valid
 }
 
+/** Muestra la vista si se cumple la condición; si no, la oculta (GONE). */
 fun View.visibleIf(condition: Boolean) {
     visibility = if (condition) View.VISIBLE else View.GONE
 }
