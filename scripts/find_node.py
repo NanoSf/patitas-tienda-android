@@ -1,5 +1,6 @@
 """Busca un nodo en el volcado de uiautomator por texto o content-desc y devuelve el centro.
-Uso: find_node.py ui.xml "texto" [last]  ·  prefijo "^" = empieza por, "~" = contiene."""
+Uso: find_node.py ui.xml "texto" [last]  ·  prefijo "^" = empieza por, "~" = contiene,
+"#" = resource-id (por ejemplo "#inputName")."""
 import re, sys
 xml, query = sys.argv[1], sys.argv[2]
 take_last = len(sys.argv) > 3 and sys.argv[3] == "last"
@@ -9,6 +10,11 @@ for n in nodes:
     text = re.search(r' text="([^"]*)"', n); desc = re.search(r' content-desc="([^"]*)"', n)
     b = re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', n)
     if not b: continue
+    if query.startswith("#"):
+        rid = re.search(r' resource-id="([^"]*)"', n)
+        if rid and rid.group(1).endswith(":id/" + query[1:]):
+            x1, y1, x2, y2 = map(int, b.groups()); hits.append(((x1 + x2) // 2, (y1 + y2) // 2))
+        continue
     for v in (text.group(1) if text else "", desc.group(1) if desc else ""):
         v = v.replace("&amp;", "&")
         ok = (query[1:] in v) if query.startswith("~") else v.startswith(query[1:]) if query.startswith("^") else v == query

@@ -1,5 +1,6 @@
-# Instala el APK en un emulador, recorre las pantallas de los tres roles
-# y publica las capturas en la rama "capturas" del repositorio.
+# Instala el APK en un emulador conectado al Firebase real, recorre las pantallas de los
+# tres roles (con GPS simulado y el checkout de ePayco) y publica las capturas en la rama
+# "capturas-v2" del repositorio. Se usa para el manual de usuario.
 name: Capturas de pantalla
 
 on:
@@ -28,7 +29,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Compilar APK
-        run: ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk Patitas_v1.0.0.apk
+        env:
+          EPAYCO_PUBLIC_KEY: ${{ secrets.EPAYCO_PUBLIC_KEY }}
+          EPAYCO_PRIVATE_KEY: ${{ secrets.EPAYCO_PRIVATE_KEY }}
+        run: ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk Patitas.apk
 
       - name: Ejecutar en emulador y capturar
         uses: reactivecircus/android-emulator-runner@v2
@@ -41,7 +45,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-          script: bash scripts/capture.sh
+          script: bash scripts/capture_v2.sh
 
       - name: Publicar capturas en la rama capturas
         if: always()
@@ -49,10 +53,10 @@ jobs:
           mkdir -p /tmp/out && cp shots/*.png /tmp/out/ || true
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan capturas
+          git checkout --orphan capturas-v2
           git rm -rf -q .
           rm -rf shots scripts app gradle .github
           cp /tmp/out/*.png . || true
           git add *.png
           git commit -q -m "Capturas de pantalla de la app"
-          git push -f origin capturas
+          git push -f origin capturas-v2
