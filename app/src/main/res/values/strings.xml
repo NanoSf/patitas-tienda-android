@@ -83,7 +83,7 @@
     <string name="login_no_account">¿No tienes cuenta?</string>
     <string name="demo_title">Cuentas de demostración</string>
     <string name="demo_hint">Toca un rol para llenar el correo y la contraseña.</string>
-    <string name="google_pending">El inicio con Google se conecta con Firebase Authentication en la siguiente fase.</string>
+    <string name="google_pending">El inicio con Google no está habilitado en esta versión. Usa tu correo y contraseña.</string>
 
     <!-- Biometría -->
     <string name="biometric_title">Ingresar a Patitas</string>
@@ -91,7 +91,7 @@
     <string name="biometric_use_password">Usar contraseña</string>
     <string name="biometric_offer_title">¿Ingresar con tu huella?</string>
     <string name="biometric_offer_message">La próxima vez podrás entrar sin escribir la contraseña. Tu huella nunca sale del dispositivo.</string>
-    <string name="biometric_not_enabled">Primero inicia sesión con tu contraseña y activa el ingreso con huella.</string>
+    <string name="biometric_not_enabled">Primero inicia sesión con tu contraseña y activa el ingreso con huella (también puedes hacerlo desde tu perfil).</string>
     <string name="biometric_none_enrolled">No hay huellas registradas en este dispositivo. Agrégalas en los ajustes del teléfono.</string>
     <string name="biometric_no_hardware">Este dispositivo no tiene lector de huella disponible.</string>
     <string name="biometric_unavailable">La autenticación biométrica no está disponible en este momento.</string>
@@ -260,7 +260,7 @@
     <string name="checkout_title">Dirección de entrega</string>
     <string name="checkout_shipping_type">Tipo de envío</string>
     <string name="shipping_option">%1$s · %2$s\n%3$s</string>
-    <string name="gps_located">Ubicación obtenida (simulada para la demostración)</string>
+    <string name="gps_located">Ubicación obtenida. Revisa la dirección y ajústala si hace falta.</string>
     <string name="demo_address">Cra. 13 # 63-27, Apto 402</string>
     <string name="demo_city">Bogotá D.C.</string>
     <string name="demo_neighborhood">Chapinero</string>
@@ -279,9 +279,9 @@
     <string name="person_natural">Persona natural</string>
     <string name="person_juridica">Persona jurídica</string>
     <string name="payment_redirect_note">Te llevaremos al portal del banco para autorizar el pago y luego volverás a Patitas.</string>
-    <string name="payment_security_note">Pago procesado por Wompi. Patitas no almacena los datos de tu tarjeta.</string>
+    <string name="payment_security_note">Pago procesado por ePayco. Patitas no ve ni almacena los datos de tu tarjeta.</string>
     <string name="payment_processing">Procesando pago…</string>
-    <string name="result_title">¡Pago aprobado!</string>
+    <string name="result_title">¡Pago confirmado!</string>
     <string name="result_subtitle">Tu pedido ya está en manos de la tienda. Te avisaremos cada cambio de estado.</string>
     <string name="result_reference">Referencia</string>
     <string name="result_method">Método</string>
@@ -325,8 +325,8 @@
     <string name="profile_guest_message">Crea una cuenta o inicia sesión para guardar direcciones, pagar y seguir tus pedidos.</string>
     <string name="profile_edit_title">Editar datos personales</string>
     <string name="profile_updated">Datos actualizados</string>
-    <string name="photo_camera_pending">Se abrirá la cámara (CameraX) para tomar tu foto de perfil</string>
-    <string name="addresses_pending">La gestión de direcciones se conecta con Firestore en la siguiente fase</string>
+    <string name="photo_camera_pending">La foto de perfil estará disponible en una próxima versión</string>
+    <string name="addresses_pending">La dirección se toma con el GPS al momento de pagar cada pedido</string>
     <string name="bank_change_note">Cambiar la cuenta exige nueva autenticación y validación del administrador</string>
     <string name="marketing_on">Recibirás ofertas dentro de los horarios permitidos (Ley 2300 de 2023)</string>
     <string name="marketing_off">Ya no recibirás ofertas</string>
@@ -355,9 +355,9 @@
     <string name="form_title_new">Nuevo producto</string>
     <string name="form_title_edit">Editar producto</string>
     <string name="form_photos">Fotos del producto</string>
-    <string name="form_photos_hint">De 1 a 6 fotos con buena luz y fondo claro.</string>
+    <string name="form_photos_hint">Toma una foto o elígela de la galería, con buena luz y fondo claro.</string>
     <string name="form_photo_count">%1$d/%2$d</string>
-    <string name="photo_taken">Foto agregada (simulación de CameraX)</string>
+    <string name="photo_taken">Foto lista. Se guardará al publicar o guardar el borrador.</string>
     <string name="form_section_info">Información</string>
     <string name="form_section_dispatch">Sede de despacho</string>
     <string name="form_dispatch_detail">Ubicada por GPS · el comprador solo ve el barrio y la distancia</string>
@@ -437,4 +437,77 @@
     <string name="cd_decrease">Disminuir cantidad</string>
     <string name="cd_more_actions">Más acciones</string>
     <string name="cd_search_by_image">Buscar por imagen</string>
+    <!-- ===== Entrega final: Firebase, ePayco y GPS ===== -->
+    <string name="action_continue">Continuar</string>
+    <string name="action_pay_epayco">Pagar %1$s con ePayco</string>
+    <string name="action_pick_gallery">Galería</string>
+    <string name="action_view_map">Ver en el mapa</string>
+    <string name="login_loading">Ingresando…</string>
+    <string name="field_temp_password">Contraseña temporal</string>
+
+    <string name="biometric_enable_subtitle">Confirma con tu huella para activar el ingreso rápido</string>
+    <string name="biometric_login_subtitle">Ingresar como %1$s</string>
+    <string name="biometric_outdated">No se pudo ingresar con la huella (%1$s). Ingresa con tu contraseña y vuelve a activarla.</string>
+    <string name="biometric_password_title">Activar ingreso con huella</string>
+    <string name="biometric_password_message">Escribe tu contraseña. Se guardará cifrada en el chip seguro del teléfono y solo tu huella podrá descifrarla.</string>
+    <string name="session_revoked_title">Sesión cerrada</string>
+    <string name="session_revoked_message">Un administrador suspendió o eliminó tu cuenta. Escríbenos a soporte@patitas.co si crees que es un error.</string>
+
+    <string name="error_generic">Ocurrió un error (%1$s). Intenta de nuevo.</string>
+    <string name="error_network">Sin conexión a internet. Revisa tu red e intenta de nuevo.</string>
+    <string name="error_permission">No tienes permiso para hacer esta operación.</string>
+    <string name="error_too_many">Demasiados intentos. Espera unos minutos e intenta de nuevo.</string>
+    <string name="error_wrong_password">Contraseña incorrecta</string>
+
+    <string name="form_photo_none">Sin foto</string>
+    <string name="form_photo_processing">Procesando…</string>
+    <string name="form_photo_ready">Foto ✓</string>
+    <string name="photo_error">No se pudo procesar la foto: %1$s</string>
+    <string name="check_photos_missing">✗ Sin foto del producto</string>
+    <string name="check_reason">Motivo registrado: %1$s</string>
+
+    <string name="gps_searching">Buscando tu ubicación…</string>
+    <string name="gps_coordinates">GPS: %1$.6f, %2$.6f</string>
+    <string name="gps_error">No se pudo obtener la ubicación: %1$s</string>
+    <string name="gps_no_address">Ubicación obtenida, pero no se encontró la dirección. Escríbela a mano.</string>
+    <string name="gps_permission_denied">Sin el permiso de ubicación puedes escribir la dirección a mano.</string>
+    <string name="gps_unavailable">No se pudo leer el GPS. Activa la ubicación del teléfono e intenta de nuevo.</string>
+
+    <string name="payment_summary">Resumen de la compra</string>
+    <string name="payment_delivery">Entrega</string>
+    <string name="payment_address">%1$s, %2$s, %3$s</string>
+    <string name="payment_epayco_title">Pago seguro con ePayco</string>
+    <string name="payment_epayco_methods">Tarjeta de crédito o débito, PSE, Nequi, Daviplata y efectivo. Eliges el medio en el siguiente paso.</string>
+    <string name="payment_test_note">Modo pruebas: ePayco no cobra dinero real. Usa los datos de prueba que muestra el checkout de ePayco.</string>
+    <string name="epayco_title">Checkout ePayco</string>
+    <string name="epayco_subtitle">Modo pruebas · conexión segura</string>
+    <string name="epayco_cancel_title">¿Cancelar el pago?</string>
+    <string name="epayco_cancel_message">Si ya pagaste, espera la confirmación antes de salir.</string>
+    <string name="epayco_cancel_yes">Salir del pago</string>
+    <string name="epayco_error">ePayco reportó un problema: %1$s</string>
+    <string name="epayco_not_configured_title">Pasarela sin configurar</string>
+    <string name="epayco_not_configured_message">Esta compilación no tiene las llaves de ePayco. Agrega EPAYCO_PUBLIC_KEY y EPAYCO_PRIVATE_KEY en local.properties (o en los secretos de GitHub) y vuelve a compilar.</string>
+    <string name="epayco_rejected">ePayco respondió: %1$s. No se registró ningún pedido.\nReferencia: %2$s</string>
+    <string name="epayco_session_error">No se pudo iniciar el pago con ePayco: %1$s</string>
+    <string name="order_save_error">El pago %1$s fue confirmado, pero no se pudo registrar el pedido: %2$s. Comunícate con soporte con esta referencia.</string>
+    <string name="result_reference_orders">%1$s\nPedidos: %2$s</string>
+    <string name="result_method_status">%1$s · %2$s</string>
+
+    <string name="order_detail_buyer">Comprador: %1$s</string>
+    <string name="order_detail_subtotal">Subtotal: %1$s</string>
+    <string name="order_detail_shipping">Envío %1$s: %2$s</string>
+    <string name="order_detail_discount">Descuento: -%1$s</string>
+    <string name="order_detail_total">Total: %1$s</string>
+    <string name="order_detail_commission">Comisión Patitas (8 %%): -%1$s · Recibes: %2$s</string>
+    <string name="order_detail_payment">Pago: %1$s · %2$s\nRef. ePayco: %3$s</string>
+    <string name="order_detail_address">Entrega: %1$s, %2$s, %3$s</string>
+    <string name="order_detail_gps">Ubicación GPS: %1$.5f, %2$.5f</string>
+    <string name="order_detail_history">Historial</string>
+
+    <string name="activity_order">Pedido %1$s · %2$s compró en %3$s por %4$s</string>
+    <string name="activity_user">Nueva cuenta: %1$s (%2$s)</string>
+    <string name="activity_empty">Todavía no hay actividad</string>
+    <string name="report_no_data">Sin ventas en el periodo</string>
+    <string name="report_export_subject">Pedidos Patitas (CSV)</string>
+    <string name="user_form_created">Cuenta creada el %1$s</string>
 </resources>
