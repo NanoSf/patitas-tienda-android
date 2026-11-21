@@ -1,26 +1,32 @@
 # Patitas · Tienda virtual Android para mascotas
 
-Aplicación nativa Android (Kotlin + vistas XML con Material Components) de un *marketplace* de productos para mascotas: alimento, snacks, rascadores, camas, ropa y juguetes.
+Aplicación nativa Android (Kotlin + vistas XML con Material Components) de un *marketplace* de productos para mascotas: alimento, snacks, rascadores, camas, ropa, juguetes e higiene.
 Proyecto académico de **Desarrollo de Aplicaciones Móviles Nativas** — Fundación Universitaria Compensar (UCompensar).
 Autor: **Einer Fabian Aponte Cubides**.
 
-🎥 **Video explicativo:** https://youtu.be/znGFyRGXpa0  
-📦 **APK:** [Releases v1.0.0](https://github.com/NanoSf/patitas-tienda-android/releases/tag/v1.0.0)
+## Versión 2.0.0 · Entrega final (aplicativo funcional)
 
-## Alcance de esta entrega (Actividad 3: frontend)
-
-Interfaces gráficas completas para los tres roles definidos en la Actividad 2. Los datos son de demostración, en memoria (`PatitasRepository`). La integración con Firebase y Wompi corresponde a la siguiente fase.
-
-| Rol | Pantallas |
+| Componente | Implementación |
 |---|---|
-| Transversal | Splash, bienvenida, inicio de sesión con **huella (BiometricPrompt)**, registro, recuperación de contraseña, **Drawer + Bottom Navigation** |
-| Comprador | Inicio, catálogo con filtros, detalle de producto, carrito (CRUD), dirección de entrega, pasarela de pagos, confirmación, pedidos y perfil |
-| Vendedor | Panel con indicadores, CRUD de productos, formulario de producto, historial de pedidos recibidos y perfil de vendedor |
-| Administrador | Dashboard, gestión de usuarios (listar, crear, editar, suspender, eliminar), gestión de productos (moderación) y reporte de ventas con gráfico |
+| Autenticación | Firebase Authentication (correo y contraseña): registro, inicio y cierre de sesión y recuperación de contraseña para los tres roles. El rol vive en `users/{uid}` de Firestore. |
+| Huella | `BiometricPrompt` + `CryptoObject`: la contraseña se cifra con una llave AES-256 del **Android Keystore** que solo se desbloquea con la huella (`CredentialVault`). |
+| CRUD de usuarios | Administrador: crear (cuenta + perfil, sin cerrar su sesión), consultar en tiempo real, editar rol y estado, verificar vendedores, suspender con motivo y eliminar. |
+| CRUD de productos | Vendedor: crear, editar, pausar, duplicar y eliminar, con foto desde la **cámara** (`TakePicture` + `FileProvider`) o la **galería** (Photo Picker). Administrador: aprobar, rechazar con motivo, despublicar y eliminar. |
+| Carrito y órdenes | Carrito en `carts/{uid}/items` (agregar, cambiar cantidad, eliminar con deshacer, cupón). Al pagar se crea un pedido por tienda en `orders` con su **historial de estados**, se descuenta el stock y se vacía el carrito en un solo lote atómico. |
+| Geolocalización | Fused Location Provider (Google Play Services) + `Geocoder` para llenar la dirección de entrega; las coordenadas se guardan en el pedido y se abren en Google Maps. |
+| Pasarela de pagos | **ePayco** Smart Checkout en modo pruebas: sesión de pago por API, checkout en `WebView` con `checkout-v2.js` y validación de la transacción por su referencia (`ref_payco`). |
+| Reportes | Ventas por semana, mes y año, por categoría y por tienda, calculadas con los pedidos reales; exportación CSV. |
+
+### Fotos de productos sin Cloud Storage
+
+El proyecto usa el **plan gratuito Spark** de Firebase, que no incluye Cloud Storage (exige el plan Blaze con tarjeta). Las fotos se reducen y comprimen en el teléfono (`ImageCodec`) y se guardan en Firestore como JPEG en Base64:
+
+- **Miniatura** (320 px, ~40 KB) dentro del documento del producto, para las listas.
+- **Foto completa** (1024 px, ~450 KB) en `productImages/{id}`, que solo se lee en el detalle.
 
 ## Cuentas de demostración
 
-La contraseña de todas es `Patitas2026*`. En la pantalla de inicio de sesión hay chips que llenan el formulario.
+La contraseña de todas es `Patitas2026*`. En la pantalla de inicio de sesión hay chips que llenan el formulario. La primera vez que se ingresa con una de ellas, la app la crea en Firebase (y carga productos de ejemplo en la tienda demo).
 
 | Rol | Correo |
 |---|---|
@@ -30,37 +36,60 @@ La contraseña de todas es `Patitas2026*`. En la pantalla de inicio de sesión h
 
 Cupón de prueba en el carrito: `PELUDO20`.
 
+## Configuración
+
+1. **Firebase**: el archivo `app/google-services.json` conecta la app con el proyecto `patitas-tienda`. Para usar otro proyecto, reemplázalo y activa *Authentication › Correo/contraseña* y *Firestore Database*.
+2. **Reglas de seguridad**: copia [`firestore.rules`](firestore.rules) en *Firebase Console › Firestore Database › Reglas* y publica.
+3. **ePayco** (opcional para compilar, necesario para pagar): agrega las llaves de pruebas en `local.properties`:
+   ```properties
+   EPAYCO_PUBLIC_KEY=tu_llave_publica
+   EPAYCO_PRIVATE_KEY=tu_llave_privada
+   ```
+   En GitHub Actions se leen de los secretos del repositorio con el mismo nombre. Sin llaves la app compila y funciona; solo el botón de pago avisa que la pasarela no está configurada.
+
+> En producción, la creación de la sesión de ePayco y la eliminación de cuentas de Authentication se harían en un servidor (Cloud Functions), para no incluir la llave privada en la app. Este proyecto usa llaves de **pruebas**, que no mueven dinero, porque Cloud Functions también exige el plan Blaze.
+
 ## Tecnología
 
 - Kotlin 2.0, Android Gradle Plugin 8.7, `minSdk 26`, `targetSdk 35`
-- Vistas XML + ViewBinding, Material Components 1.12 (tema Material 3 personalizado)
-- AndroidX Biometric para el ingreso con huella
-- Un tema por rol: verde azulado (comprador), terracota (vendedor) y gris pizarra (administrador)
+- Vistas XML + ViewBinding, Material Components 1.12 (tema Material 3 personalizado, uno por rol)
+- Firebase BoM 33.7: Authentication y Cloud Firestore (listeners en tiempo real con `LiveData`)
+- Corrutinas de Kotlin (`lifecycleScope`, `await()` sobre las `Task` de Firebase)
+- AndroidX Biometric + Android Keystore
+- Google Play Services Location 21.3
+- ePayco Smart Checkout (`apify.epayco.co` + `checkout-v2.js`)
 
 ## Estructura
 
 ```
-app/src/main/
-├── java/co/patitas/tienda/
-│   ├── data/          Modelos y repositorio en memoria
-│   ├── util/          Formatos (COP), sesión, biometría y extensiones
-│   └── ui/
-│       ├── auth/      Splash, bienvenida, login, registro, recuperación
-│       ├── common/    Contenedor por rol (Drawer + Bottom Nav), perfil, gráfico de barras
-│       ├── buyer/     Pantallas del comprador
-│       ├── seller/    Pantallas del vendedor
-│       └── admin/     Pantallas del administrador
-└── res/
-    ├── layout/        39 layouts XML (activities, fragments, ítems, diálogos)
-    ├── drawable/      Íconos vectoriales, shapes, gradientes, layer-list y selectores
-    ├── values/        colors, themes, styles, dimens, strings, arrays, attrs
-    ├── color/         Listas de estados de color (selector)
-    ├── menu/          Menús de Bottom Navigation, Drawer y acciones
-    └── anim/          Animaciones del splash
+app/src/main/java/co/patitas/tienda/
+├── data/        Modelos, repositorios de Firestore (Auth, User, Product, Cart, Order),
+│                reportes, cuentas de demostración y cliente de ePayco
+├── util/        Formatos, huella (BiometricHelper, CredentialVault), imágenes (ImageCodec),
+│                errores y extensiones de vistas
+└── ui/
+    ├── auth/    Splash, bienvenida, inicio de sesión, registro y recuperación
+    ├── common/  Contenedor por rol (Drawer + Bottom Nav), perfil, pedidos y gráfico
+    ├── buyer/   Inicio, catálogo, detalle, carrito, dirección (GPS), pago (ePayco) y pedidos
+    ├── seller/  Panel, CRUD de productos con foto y pedidos recibidos
+    └── admin/   Dashboard, CRUD de usuarios, moderación de productos y reportes
+firestore.rules  Reglas de seguridad por rol y propietario
 ```
+
+### Modelo de datos (Cloud Firestore)
+
+| Colección | Contenido |
+|---|---|
+| `users/{uid}` | nombre, correo, teléfono, rol, estado, documento, tienda |
+| `products/{id}` | datos del producto, estado de moderación, vendedor, miniatura |
+| `productImages/{id}` | foto completa en Base64 |
+| `carts/{uid}/items/{id}` | ítems del carrito |
+| `orders/{id}` | comprador, tienda, ítems, totales, dirección con coordenadas, pago de ePayco e historial de estados |
 
 ## Compilar el APK
 
 1. Abrir la carpeta en Android Studio y esperar la sincronización de Gradle.
 2. **Build ▸ Build App Bundle(s) / APK(s) ▸ Build APK(s)**.
 3. El APK queda en `app/build/outputs/apk/debug/app-debug.apk`.
+
+También se compila automáticamente con GitHub Actions en cada *push*; el APK de `main` se publica en **Releases**.
