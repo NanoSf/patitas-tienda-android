@@ -13,6 +13,7 @@ import co.patitas.tienda.ui.seller.SellerHomeActivity
  * (RF-INI-04). El invitado (user = null) entra al inicio del comprador.
  */
 object RoleRouter {
+    /** Abre el inicio del rol y cierra la pantalla actual. */
     fun open(activity: Activity, user: User?) {
         val destination = when (user?.role) {
             Role.SELLER -> SellerHomeActivity::class.java

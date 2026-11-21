@@ -3,25 +3,28 @@ package co.patitas.tienda.ui.auth
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.AuthRepository
 import co.patitas.tienda.databinding.ActivitySplashBinding
 import co.patitas.tienda.ui.common.RoleRouter
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Splash screen: muestra la marca mientras carga la app (RF-INI-01).
- * Si hay una sesión activa en memoria va directo al inicio del rol; si no, a la bienvenida.
+ * Al mismo tiempo revisa si Firebase Authentication tiene una sesión guardada: si la hay,
+ * lee el perfil en Firestore y abre el inicio del rol; si no, va a la bienvenida.
  */
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashBinding
-    private val handler = Handler(Looper.getMainLooper())
 
+    /** Infla el layout, conecta los eventos de la pantalla y carga sus datos. */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
@@ -33,22 +36,18 @@ class SplashActivity : AppCompatActivity() {
         binding.textAppName.startAnimation(slideUp)
         binding.textTagline.startAnimation(slideUp)
 
-        handler.postDelayed({ goNext() }, SPLASH_DURATION_MS)
-    }
-
-    private fun goNext() {
-        val user = PatitasRepository.currentUser
-        if (user != null) {
-            RoleRouter.open(this, user)
-        } else {
-            startActivity(Intent(this, WelcomeActivity::class.java))
-            finish()
+        // La animación y la consulta de la sesión corren en paralelo.
+        lifecycleScope.launch {
+            val session = async { AuthRepository.restore() }
+            delay(SPLASH_DURATION_MS)
+            val user = session.await()
+            if (user != null) {
+                RoleRouter.open(this@SplashActivity, user)
+            } else {
+                startActivity(Intent(this@SplashActivity, WelcomeActivity::class.java))
+                finish()
+            }
         }
-    }
-
-    override fun onDestroy() {
-        handler.removeCallbacksAndMessages(null)
-        super.onDestroy()
     }
 
     private companion object {

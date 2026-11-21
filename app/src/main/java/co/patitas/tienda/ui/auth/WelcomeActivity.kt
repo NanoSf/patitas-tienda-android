@@ -11,6 +11,7 @@ class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWelcomeBinding
 
+    /** Infla el layout, conecta los eventos de la pantalla y carga sus datos. */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWelcomeBinding.inflate(layoutInflater)

@@ -3,20 +3,25 @@ package co.patitas.tienda.ui.auth
 import android.os.Bundle
 import android.util.Patterns
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.AuthRepository
 import co.patitas.tienda.data.Role
 import co.patitas.tienda.databinding.ActivityRegisterBinding
 import co.patitas.tienda.ui.common.RoleRouter
 import co.patitas.tienda.util.SessionManager
+import co.patitas.tienda.util.errorMessage
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import kotlinx.coroutines.launch
 import co.patitas.tienda.util.snack
 import co.patitas.tienda.util.validate
 import co.patitas.tienda.util.value
 import co.patitas.tienda.util.visibleIf
 
 /**
- * Registro de cuenta (RF-USR-01 y RF-USR-02). Los administradores no se registran aquí:
- * solo los crea otro administrador desde la gestión de usuarios.
+ * Registro de cuenta (RF-USR-01 y RF-USR-02) en Firebase Authentication + perfil en Firestore.
+ * Los administradores no se registran aquí: solo los crea otro administrador desde la gestión
+ * de usuarios. Los vendedores quedan "Por verificar" hasta que el administrador los apruebe.
  */
 class RegisterActivity : AppCompatActivity() {
 
@@ -25,6 +30,7 @@ class RegisterActivity : AppCompatActivity() {
     private val isSeller: Boolean
         get() = binding.toggleRole.checkedButtonId == R.id.buttonRoleSeller
 
+    /** Infla el layout, conecta los eventos de la pantalla y carga sus datos. */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
@@ -37,6 +43,7 @@ class RegisterActivity : AppCompatActivity() {
         binding.buttonCreate.setOnClickListener { createAccount() }
     }
 
+    /** Valida el formulario y crea la cuenta en Firebase. */
     private fun createAccount() {
         val name = binding.inputName.value
         val email = binding.inputEmail.value
@@ -46,9 +53,6 @@ class RegisterActivity : AppCompatActivity() {
 
         var valid = binding.inputName.validate(name.length >= 3, getString(R.string.error_name))
         valid = binding.inputEmail.validate(Patterns.EMAIL_ADDRESS.matcher(email).matches(), getString(R.string.error_email)) && valid
-        if (valid && PatitasRepository.emailExists(email)) {
-            valid = binding.inputEmail.validate(false, getString(R.string.error_email_exists))
-        }
         valid = binding.inputPhone.validate(phone.length == 10, getString(R.string.error_phone)) && valid
         valid = binding.inputPassword.validate(isStrong(password), getString(R.string.error_password)) && valid
         valid = binding.inputConfirm.validate(confirm == password && confirm.isNotEmpty(), getString(R.string.error_password_match)) && valid
@@ -62,12 +66,25 @@ class RegisterActivity : AppCompatActivity() {
         }
         if (!valid) return
 
-        val user = PatitasRepository.register(
-            name, email, phone, if (isSeller) Role.SELLER else Role.BUYER, password,
-            binding.inputStoreName.value, binding.inputDocument.value
-        )
-        SessionManager(this).lastEmail = user.email
-        RoleRouter.open(this, user)
+        binding.buttonCreate.isEnabled = false
+        lifecycleScope.launch {
+            try {
+                val user = AuthRepository.register(
+                    name, email, phone, if (isSeller) Role.SELLER else Role.BUYER, password,
+                    binding.inputStoreName.value, binding.inputDocument.value
+                )
+                SessionManager(this@RegisterActivity).lastEmail = user.email
+                RoleRouter.open(this@RegisterActivity, user)
+            } catch (e: Exception) {
+                binding.buttonCreate.isEnabled = true
+                // El correo duplicado lo detecta Firebase Authentication.
+                if (e is FirebaseAuthUserCollisionException) {
+                    binding.inputEmail.validate(false, getString(R.string.error_email_exists))
+                } else {
+                    binding.root.snack(errorMessage(e))
+                }
+            }
+        }
     }
 
     /** Al menos 10 caracteres con mayúscula, minúscula y número (RNF-SEG-07). */

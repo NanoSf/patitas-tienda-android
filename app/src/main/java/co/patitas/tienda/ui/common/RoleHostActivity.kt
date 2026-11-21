@@ -9,7 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.AuthRepository
+import co.patitas.tienda.data.Session
+import co.patitas.tienda.data.UserRepository
+import co.patitas.tienda.data.UserStatus
 import co.patitas.tienda.databinding.ActivityRoleHostBinding
 import co.patitas.tienda.databinding.NavHeaderBinding
 import co.patitas.tienda.ui.auth.WelcomeActivity
@@ -21,6 +24,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  *  - Bottom Navigation: cada pestaña reemplaza el Fragment del contenedor.
  *  - Drawer (NavigationView): accesos a las pestañas, ayuda, privacidad y cerrar sesión.
  * Cada rol (Comprador, Vendedor, Administrador) solo define sus menús y sus Fragments.
+ * Además escucha en tiempo real el perfil del usuario: si un administrador lo suspende o lo
+ * elimina mientras usa la app, se cierra la sesión.
  */
 abstract class RoleHostActivity : AppCompatActivity() {
 
@@ -38,6 +43,7 @@ abstract class RoleHostActivity : AppCompatActivity() {
     /** Opciones del Drawer propias del rol (por ejemplo, "Nuevo producto"). */
     protected open fun onRoleDrawerItem(itemId: Int): Boolean = false
 
+    /** Infla el layout, conecta los eventos de la pantalla y carga sus datos. */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRoleHostBinding.inflate(layoutInflater)
@@ -64,6 +70,7 @@ abstract class RoleHostActivity : AppCompatActivity() {
         }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            /** Manejo del botón Atrás del sistema. */
             override fun handleOnBackPressed() {
                 val firstTab = binding.bottomNav.menu.getItem(0).itemId
                 when {
@@ -74,6 +81,8 @@ abstract class RoleHostActivity : AppCompatActivity() {
                 }
             }
         })
+
+        watchOwnProfile()
 
         val initialTab = intent.getIntExtra(EXTRA_TAB, binding.bottomNav.menu.getItem(0).itemId)
         if (savedInstanceState == null) {
@@ -93,6 +102,7 @@ abstract class RoleHostActivity : AppCompatActivity() {
         binding.bottomNav.selectedItemId = itemId
     }
 
+    /** Reemplaza el Fragment del contenedor por el de la pestaña elegida. */
     private fun showTab(item: MenuItem) {
         val fragment = fragmentFor(item.itemId) ?: return
         supportFragmentManager.beginTransaction()
@@ -103,6 +113,7 @@ abstract class RoleHostActivity : AppCompatActivity() {
         binding.navView.setCheckedItem(item.itemId)
     }
 
+    /** Acciones del menú lateral comunes a los tres roles. */
     private fun onDrawerItem(item: MenuItem) {
         when (item.itemId) {
             R.id.nav_logout -> requestLogout()
@@ -118,11 +129,42 @@ abstract class RoleHostActivity : AppCompatActivity() {
         }
     }
 
+    /** Observa el documento users/{uid}; cambios de rol o estado se aplican al instante. */
+    private fun watchOwnProfile() {
+        val uid = Session.user?.id ?: return
+        UserRepository.watch(uid).observe(this) { profile ->
+            when {
+                profile == null || profile.status == UserStatus.SUSPENDED -> forceLogout()
+                else -> {
+                    Session.update(profile)
+                    bindDrawerHeader()
+                }
+            }
+        }
+    }
+
+    private var forcedOut = false
+
+    /** Cierra la sesión cuando el perfil fue suspendido o eliminado. */
+    private fun forceLogout() {
+        if (forcedOut || Session.user == null) return
+        forcedOut = true
+        AuthRepository.logout()
+        MaterialAlertDialogBuilder(this)
+            .setIcon(R.drawable.ic_block)
+            .setTitle(R.string.session_revoked_title)
+            .setMessage(R.string.session_revoked_message)
+            .setPositiveButton(R.string.action_understood) { _, _ -> goToWelcome() }
+            .setCancelable(false)
+            .show()
+    }
+
+    /** Encabezado del menú lateral con las iniciales, el nombre y el rol. */
     private fun bindDrawerHeader() {
         val header = NavHeaderBinding.bind(binding.navView.getHeaderView(0))
-        val user = PatitasRepository.currentUser
+        val user = Session.user
         header.textInitials.text = user?.initials ?: "?"
-        header.textName.text = user?.storeName?.takeIf { it.isNotBlank() } ?: user?.name ?: getString(R.string.guest_name)
+        header.textName.text = user?.displayName ?: getString(R.string.guest_name)
         header.textEmail.text = user?.email ?: getString(R.string.guest_email)
         header.textRole.text = user?.role?.label ?: getString(R.string.guest_role)
         if (user == null) {
@@ -130,6 +172,7 @@ abstract class RoleHostActivity : AppCompatActivity() {
         }
     }
 
+    /** Diálogo informativo (ayuda y privacidad). */
     private fun showInfo(titleRes: Int, messageRes: Int) {
         MaterialAlertDialogBuilder(this)
             .setTitle(titleRes)
@@ -140,7 +183,7 @@ abstract class RoleHostActivity : AppCompatActivity() {
 
     /** Cerrar sesión con confirmación; lo usan el Drawer y el botón del perfil. */
     fun requestLogout() {
-        if (PatitasRepository.currentUser == null) {
+        if (Session.user == null) {
             goToWelcome()
             return
         }
@@ -148,13 +191,14 @@ abstract class RoleHostActivity : AppCompatActivity() {
             .setTitle(R.string.logout_title)
             .setMessage(R.string.logout_message)
             .setPositiveButton(R.string.drawer_logout) { _, _ ->
-                PatitasRepository.logout()
+                AuthRepository.logout()
                 goToWelcome()
             }
             .setNegativeButton(R.string.action_cancel, null)
             .show()
     }
 
+    /** Vuelve a la bienvenida limpiando la pila de pantallas. */
     private fun goToWelcome() {
         startActivity(
             Intent(this, WelcomeActivity::class.java)
