@@ -11,15 +11,23 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import androidx.lifecycle.lifecycleScope
+import co.patitas.tienda.data.AuthRepository
+import co.patitas.tienda.data.OrderRepository
+import co.patitas.tienda.data.ProductRepository
+import co.patitas.tienda.data.Reports
 import co.patitas.tienda.data.Role
+import co.patitas.tienda.data.Session
 import co.patitas.tienda.data.User
 import co.patitas.tienda.databinding.DialogEditProfileBinding
+import co.patitas.tienda.databinding.DialogPasswordBinding
 import co.patitas.tienda.databinding.FragmentProfileBinding
 import co.patitas.tienda.databinding.ViewSettingRowBinding
 import co.patitas.tienda.ui.auth.LoginActivity
 import co.patitas.tienda.ui.auth.WelcomeActivity
 import co.patitas.tienda.util.BiometricHelper
+import co.patitas.tienda.util.CredentialVault
+import co.patitas.tienda.util.errorMessage
 import co.patitas.tienda.util.Format
 import co.patitas.tienda.util.SessionManager
 import co.patitas.tienda.util.applyStatus
@@ -28,16 +36,19 @@ import co.patitas.tienda.util.validate
 import co.patitas.tienda.util.value
 import co.patitas.tienda.util.visibleIf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 
 /**
  * Perfil del usuario: CRUD de perfil del Comprador (C-08) y perfil del Vendedor (V-07).
- * Si el rol es Vendedor muestra además los datos de la tienda y sus indicadores.
+ * Consultar y actualizar los datos en Firestore, activar la huella y eliminar la cuenta.
+ * Si el rol es Vendedor muestra además los datos de la tienda y sus indicadores reales.
  */
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var session: SessionManager
+    private lateinit var vault: CredentialVault
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -46,7 +57,8 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         session = SessionManager(requireContext())
-        val user = PatitasRepository.currentUser
+        vault = CredentialVault(requireContext())
+        val user = Session.user
         if (user == null) {
             bindGuest()
             return
@@ -55,7 +67,7 @@ class ProfileFragment : Fragment() {
         bindPreferences()
         bindPrivacy(user)
 
-        binding.buttonEdit.setOnClickListener { editProfile(user) }
+        binding.buttonEdit.setOnClickListener { editProfile(Session.user ?: user) }
         binding.buttonPhoto.setOnClickListener { binding.root.snack(R.string.photo_camera_pending) }
         binding.buttonLogout.setOnClickListener { (requireActivity() as RoleHostActivity).requestLogout() }
     }
@@ -81,7 +93,7 @@ class ProfileFragment : Fragment() {
 
     private fun bindUser(user: User) {
         binding.textAvatar.text = user.initials
-        binding.textName.text = if (user.role == Role.SELLER && user.storeName.isNotBlank()) user.storeName else user.name
+        binding.textName.text = user.displayName
         binding.textEmail.text = user.email
         binding.textRole.text = user.role.label
         binding.textStatus.applyStatus(user.status.style)
@@ -96,11 +108,20 @@ class ProfileFragment : Fragment() {
         binding.groupStore.visibleIf(isSeller)
         if (isSeller) {
             binding.kpiRating.imageKpiIcon.setImageResource(R.drawable.ic_star)
-            binding.kpiRating.textKpiValue.text = Format.rating(4.8)
+            binding.kpiRating.textKpiValue.text = "—"
             binding.kpiRating.textKpiLabel.setText(R.string.kpi_rating)
             binding.kpiSales.imageKpiIcon.setImageResource(R.drawable.ic_trending_up)
-            binding.kpiSales.textKpiValue.text = Format.moneyShort(14_800_000)
+            binding.kpiSales.textKpiValue.text = Format.moneyShort(0)
             binding.kpiSales.textKpiLabel.setText(R.string.kpi_sales_month)
+            // Indicadores calculados con los productos y pedidos reales de la tienda.
+            ProductRepository.ofSeller(user.id).observe(viewLifecycleOwner) { products ->
+                val rated = products.filter { it.reviews > 0 }
+                binding.kpiRating.textKpiValue.text =
+                    if (rated.isEmpty()) "—" else Format.rating(rated.map { it.rating }.average())
+            }
+            OrderRepository.ofSeller(user.id).observe(viewLifecycleOwner) { orders ->
+                binding.kpiSales.textKpiValue.text = Format.moneyShort(Reports.salesThisMonth(orders))
+            }
             row(binding.rowStoreName, R.drawable.ic_store, getString(R.string.field_store_name), user.storeName)
             row(binding.rowSchedule, R.drawable.ic_schedule, getString(R.string.profile_schedule), getString(R.string.profile_schedule_value))
             row(binding.rowDispatch, R.drawable.ic_my_location, getString(R.string.profile_dispatch), getString(R.string.profile_dispatch_value)) {
@@ -113,11 +134,11 @@ class ProfileFragment : Fragment() {
     }
 
     private fun bindPreferences() {
-        binding.switchBiometric.isChecked = session.biometricEnabled
+        binding.switchBiometric.isChecked = vault.hasCredential && vault.email.equals(Session.user?.email, true)
         binding.switchBiometric.setOnCheckedChangeListener { button, checked ->
             if (!button.isPressed) return@setOnCheckedChangeListener
             if (!checked) {
-                session.biometricEnabled = false
+                vault.clear()
                 binding.root.snack(R.string.biometric_disabled)
                 return@setOnCheckedChangeListener
             }
@@ -126,22 +147,54 @@ class ProfileFragment : Fragment() {
                 binding.root.snack(BiometricHelper.unavailableReason(requireContext()))
                 return@setOnCheckedChangeListener
             }
-            // Activar la huella exige confirmar con la propia huella (RF-PER-05).
-            BiometricHelper.authenticate(
-                requireActivity(),
-                onSuccess = {
-                    session.biometricEnabled = true
-                    session.lastEmail = PatitasRepository.currentUser?.email
-                    binding.root.snack(R.string.biometric_enabled)
-                },
-                onError = { message ->
-                    button.isChecked = false
-                    binding.root.snack(message)
-                }
-            )
+            askPasswordThenEnable()
         }
         binding.switchMarketing.setOnCheckedChangeListener { button, checked ->
             if (button.isPressed) binding.root.snack(if (checked) R.string.marketing_on else R.string.marketing_off)
+        }
+    }
+
+    /**
+     * Activar la huella (RF-PER-05): se confirma la contraseña con Firebase y luego la huella
+     * autoriza la llave del Keystore que la cifra (CredentialVault).
+     */
+    private fun askPasswordThenEnable() {
+        val dialog = DialogPasswordBinding.inflate(layoutInflater)
+        val alert = MaterialAlertDialogBuilder(requireContext())
+            .setIcon(R.drawable.ic_fingerprint)
+            .setTitle(R.string.biometric_password_title)
+            .setMessage(R.string.biometric_password_message)
+            .setView(dialog.root)
+            .setPositiveButton(R.string.action_continue, null)
+            .setNegativeButton(R.string.action_cancel) { _, _ -> binding.switchBiometric.isChecked = false }
+            .setOnCancelListener { binding.switchBiometric.isChecked = false }
+            .show()
+        alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+            val password = dialog.inputDialogPassword.editText?.text?.toString().orEmpty()
+            if (!dialog.inputDialogPassword.validate(password.isNotEmpty(), getString(R.string.error_required))) return@setOnClickListener
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    AuthRepository.verifyPassword(password)
+                } catch (e: Exception) {
+                    dialog.inputDialogPassword.error = getString(R.string.error_wrong_password)
+                    return@launch
+                }
+                alert.dismiss()
+                vault.clear()
+                BiometricHelper.authenticate(
+                    requireActivity(), vault.encryptCipher(),
+                    subtitle = getString(R.string.biometric_enable_subtitle),
+                    onSuccess = { cipher ->
+                        vault.save(cipher, Session.user?.email.orEmpty(), password)
+                        session.biometricOffered = true
+                        binding.root.snack(R.string.biometric_enabled)
+                    },
+                    onError = { message ->
+                        binding.switchBiometric.isChecked = false
+                        binding.root.snack(message)
+                    }
+                )
+            }
         }
     }
 
@@ -180,11 +233,16 @@ class ProfileFragment : Fragment() {
             var valid = dialog.inputDialogName.validate(dialog.inputDialogName.value.length >= 3, getString(R.string.error_name))
             valid = dialog.inputDialogPhone.validate(dialog.inputDialogPhone.value.filter { it.isDigit() }.length == 10, getString(R.string.error_phone)) && valid
             if (!valid) return@setOnClickListener
-            user.name = dialog.inputDialogName.value
-            user.phone = dialog.inputDialogPhone.value
-            bindUser(user)
-            alert.dismiss()
-            binding.root.snack(R.string.profile_updated)
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val updated = AuthRepository.updateOwnProfile(dialog.inputDialogName.value, dialog.inputDialogPhone.value)
+                    bindUser(updated)
+                    alert.dismiss()
+                    binding.root.snack(R.string.profile_updated)
+                } catch (e: Exception) {
+                    binding.root.snack(requireContext().errorMessage(e))
+                }
+            }
         }
     }
 
@@ -194,11 +252,17 @@ class ProfileFragment : Fragment() {
             .setTitle(R.string.delete_account_title)
             .setMessage(R.string.delete_account_message)
             .setPositiveButton(R.string.action_delete) { _, _ ->
-                PatitasRepository.deleteUser(user)
-                PatitasRepository.logout()
-                session.clearBiometric()
-                startActivity(Intent(requireContext(), WelcomeActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                val context = requireContext().applicationContext
+                viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        AuthRepository.deleteOwnAccount()
+                        vault.clear()
+                        startActivity(Intent(context, WelcomeActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                    } catch (e: Exception) {
+                        binding.root.snack(requireContext().errorMessage(e))
+                    }
+                }
             }
             .setNegativeButton(R.string.action_cancel, null)
             .show()

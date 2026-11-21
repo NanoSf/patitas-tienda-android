@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Pasarela de pagos (C-05): total, método (tarjeta, PSE, Nequi, Botón Bancolombia) y formulario
-    según el método. Los datos de la tarjeta se tokenizan con el SDK de Wompi (PCI DSS).
+    Pasarela de pagos (C-05): resumen de la compra, dirección de entrega y botón para pagar con
+    ePayco. Los medios de pago (tarjeta, PSE, Nequi, Daviplata, efectivo) los muestra el checkout
+    de ePayco, así que los datos de la tarjeta nunca pasan por la app (PCI DSS).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -68,212 +69,68 @@
 
             <TextView
                 style="@style/Widget.Patitas.SectionTitle"
-                android:text="@string/payment_method" />
-
-            <RadioGroup
-                android:id="@+id/radioMethod"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checkedButton="@id/radioCard">
-
-                <RadioButton
-                    android:id="@+id/radioCard"
-                    style="@style/Widget.Patitas.PaymentOption"
-                    android:text="@string/method_card"
-                    app:drawableStartCompat="@drawable/ic_credit_card" />
-
-                <RadioButton
-                    android:id="@+id/radioPse"
-                    style="@style/Widget.Patitas.PaymentOption"
-                    android:text="@string/method_pse"
-                    app:drawableStartCompat="@drawable/ic_bank" />
-
-                <RadioButton
-                    android:id="@+id/radioNequi"
-                    style="@style/Widget.Patitas.PaymentOption"
-                    android:text="@string/method_nequi"
-                    app:drawableStartCompat="@drawable/ic_smartphone" />
-
-                <RadioButton
-                    android:id="@+id/radioBancolombia"
-                    style="@style/Widget.Patitas.PaymentOption"
-                    android:text="@string/method_bancolombia"
-                    app:drawableStartCompat="@drawable/ic_bank" />
-            </RadioGroup>
-
-            <!-- Formulario de tarjeta -->
-            <LinearLayout
-                android:id="@+id/groupCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/Widget.Patitas.SectionTitle"
-                    android:text="@string/payment_card_data" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/inputCardNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/field_card_number"
-                    app:startIconDrawable="@drawable/ic_credit_card">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints="creditCardNumber"
-                        android:inputType="number"
-                        android:maxLength="19" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/inputCardName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_m"
-                    android:hint="@string/field_card_name">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textCapCharacters" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_m"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/inputCardExpiry"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/space_s"
-                        android:layout_weight="1"
-                        android:hint="@string/field_card_expiry"
-                        app:placeholderText="@string/card_expiry_placeholder">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="date"
-                            android:maxLength="5" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/inputCardCvv"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/space_s"
-                        android:layout_weight="1"
-                        android:hint="@string/field_card_cvv"
-                        app:endIconMode="password_toggle">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberPassword"
-                            android:maxLength="4" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- PSE: banco desde un menú desplegable (string-array banks) -->
-            <LinearLayout
-                android:id="@+id/groupPse"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    style="@style/Widget.Patitas.SectionTitle"
-                    android:text="@string/payment_pse_data" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/inputBank"
-                    style="@style/Widget.Patitas.TextInput.Dropdown"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/field_bank">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/dropdownBank"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        android:paddingStart="@dimen/space_l"
-                        android:paddingEnd="@dimen/space_l" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.button.MaterialButtonToggleGroup
-                    android:id="@+id/togglePersonType"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_m"
-                    app:checkedButton="@id/buttonNatural"
-                    app:selectionRequired="true"
-                    app:singleSelection="true">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/buttonNatural"
-                        style="@style/Widget.Patitas.Button.Outlined"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/person_natural" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/buttonJuridica"
-                        style="@style/Widget.Patitas.Button.Outlined"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/person_juridica" />
-                </com.google.android.material.button.MaterialButtonToggleGroup>
-            </LinearLayout>
-
-            <!-- Nequi: número de celular -->
-            <LinearLayout
-                android:id="@+id/groupNequi"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    style="@style/Widget.Patitas.SectionTitle"
-                    android:text="@string/payment_nequi_data" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/inputNequiPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/field_phone"
-                    app:prefixText="@string/phone_prefix"
-                    app:startIconDrawable="@drawable/ic_smartphone">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="phone"
-                        android:maxLength="10" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
+                android:text="@string/payment_summary" />
 
             <TextView
-                android:id="@+id/textRedirect"
+                android:id="@+id/textItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="4dp"
+                android:textAppearance="@style/TextAppearance.Patitas.Body" />
+
+            <TextView
+                style="@style/Widget.Patitas.SectionTitle"
+                android:text="@string/payment_delivery" />
+
+            <TextView
+                android:id="@+id/textAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/space_s"
+                android:textAppearance="@style/TextAppearance.Patitas.Body"
+                app:drawableStartCompat="@drawable/ic_location"
+                app:drawableTint="?attr/colorPrimary" />
+
+            <TextView
+                style="@style/Widget.Patitas.SectionTitle"
+                android:text="@string/payment_method" />
+
+            <!-- Medios de pago que ofrece el checkout de ePayco -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_option"
+                android:orientation="vertical"
+                android:padding="@dimen/space_l">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/space_s"
+                    android:gravity="center_vertical"
+                    android:text="@string/payment_epayco_title"
+                    android:textAppearance="@style/TextAppearance.Patitas.Subtitle"
+                    app:drawableStartCompat="@drawable/ic_credit_card"
+                    app:drawableTint="?attr/colorPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:text="@string/payment_epayco_methods"
+                    android:textAppearance="@style/TextAppearance.Patitas.Caption" />
+            </LinearLayout>
+
+            <!-- Aviso de modo pruebas -->
+            <TextView
+                android:id="@+id/textTestMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_l"
-                android:background="@drawable/bg_notice_info"
+                android:background="@drawable/bg_notice_warning"
                 android:padding="@dimen/space_m"
-                android:text="@string/payment_redirect_note"
-                android:textColor="?attr/colorOnPrimaryContainer"
-                android:textSize="@dimen/text_caption"
-                android:visibility="gone" />
+                android:text="@string/payment_test_note"
+                android:textSize="@dimen/text_caption" />
 
             <TextView
                 android:layout_width="match_parent"

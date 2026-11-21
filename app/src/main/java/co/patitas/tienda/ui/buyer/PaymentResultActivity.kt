@@ -10,7 +10,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/** Confirmación del pago aprobado (C-06, RF-PAG-05). */
+/**
+ * Confirmación del pago (C-06, RF-PAG-05): referencia de ePayco, medio de pago, estado de la
+ * transacción y códigos de los pedidos creados en Firestore.
+ */
 class PaymentResultActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPaymentResultBinding
@@ -20,8 +23,16 @@ class PaymentResultActivity : AppCompatActivity() {
         binding = ActivityPaymentResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.textReference.text = intent.getStringExtra(EXTRA_REFERENCE)
-        binding.textMethod.text = intent.getStringExtra(EXTRA_METHOD)
+        binding.textReference.text = getString(
+            R.string.result_reference_orders,
+            intent.getStringExtra(EXTRA_REFERENCE).orEmpty(),
+            intent.getStringExtra(EXTRA_ORDERS).orEmpty()
+        )
+        binding.textMethod.text = getString(
+            R.string.result_method_status,
+            intent.getStringExtra(EXTRA_METHOD).orEmpty(),
+            intent.getStringExtra(EXTRA_STATUS).orEmpty()
+        )
         binding.textTotal.text = Format.money(intent.getLongExtra(EXTRA_TOTAL, 0))
         binding.textDate.text = SimpleDateFormat("dd MMM yyyy · h:mm a", Locale("es", "CO")).format(Date())
 
@@ -41,5 +52,8 @@ class PaymentResultActivity : AppCompatActivity() {
         const val EXTRA_REFERENCE = "extra_reference"
         const val EXTRA_METHOD = "extra_method"
         const val EXTRA_TOTAL = "extra_total"
+        const val EXTRA_STATUS = "extra_status"
+        const val EXTRA_PENDING = "extra_pending"
+        const val EXTRA_ORDERS = "extra_orders"
     }
 }

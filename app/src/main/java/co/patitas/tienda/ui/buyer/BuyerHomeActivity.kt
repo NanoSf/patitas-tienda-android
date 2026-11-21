@@ -2,14 +2,20 @@ package co.patitas.tienda.ui.buyer
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.CartItem
+import co.patitas.tienda.data.CartRepository
+import co.patitas.tienda.data.CheckoutState
 import co.patitas.tienda.ui.common.ProfileFragment
 import co.patitas.tienda.ui.common.RoleHostActivity
 
-/** Contenedor del rol Comprador: Inicio, Catálogo, Carrito, Pedidos y Perfil. */
+/**
+ * Contenedor del rol Comprador: Inicio, Catálogo, Carrito, Pedidos y Perfil.
+ * Observa el carrito en Firestore para mantener actualizado el badge de la pestaña Carrito.
+ */
 class BuyerHomeActivity : RoleHostActivity() {
 
     override val bottomMenu = R.menu.bottom_buyer
@@ -24,14 +30,14 @@ class BuyerHomeActivity : RoleHostActivity() {
         else -> null
     }
 
-    override fun onResume() {
-        super.onResume()
-        refreshCartBadge()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        CartRepository.live()?.observe(this) { items -> refreshCartBadge(items) }
     }
 
     /** Badge con la cantidad de productos sobre la pestaña Carrito. */
-    fun refreshCartBadge() {
-        val count = PatitasRepository.cartCount()
+    private fun refreshCartBadge(items: List<CartItem>) {
+        val count = CheckoutState.count(items)
         val badge = binding.bottomNav.getOrCreateBadge(R.id.tab_cart)
         badge.backgroundColor = ContextCompat.getColor(this, R.color.accent_amber)
         badge.badgeTextColor = ContextCompat.getColor(this, R.color.ink_900)

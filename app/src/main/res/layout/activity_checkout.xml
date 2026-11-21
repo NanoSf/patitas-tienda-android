@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Dirección de entrega (C-04): mapa, ubicación por GPS, dirección y tipo de envío. -->
+<!--
+    Dirección de entrega (C-04): ubicación por GPS (Fused Location Provider de Google Play
+    Services + Geocoder), dirección, coordenadas capturadas y tipo de envío.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -59,6 +62,19 @@
                 android:layout_marginTop="@dimen/space_m"
                 android:text="@string/action_use_gps"
                 app:icon="@drawable/ic_my_location" />
+
+            <!-- Coordenadas capturadas por el GPS; se guardan en el pedido. -->
+            <TextView
+                android:id="@+id/textCoordinates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:background="@drawable/bg_notice_info"
+                android:drawablePadding="@dimen/space_s"
+                android:padding="@dimen/space_m"
+                android:textAppearance="@style/TextAppearance.Patitas.Caption"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_location" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputAddress"

@@ -8,11 +8,12 @@ import co.patitas.tienda.R
 import co.patitas.tienda.data.CartItem
 import co.patitas.tienda.databinding.ItemCartBinding
 import co.patitas.tienda.util.Format
+import co.patitas.tienda.util.showProduct
 import co.patitas.tienda.util.snack
 
 /** Adaptador del carrito: actualizar cantidad (U) y eliminar (D) del CRUD de carrito. */
 class CartAdapter(
-    private val onQuantityChanged: () -> Unit,
+    private val onQuantityChanged: (CartItem, Int) -> Unit,
     private val onDelete: (CartItem) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.Holder>() {
 
@@ -34,28 +35,22 @@ class CartAdapter(
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val item = items[position]
         val b = holder.binding
-        b.frameThumb.setBackgroundResource(item.product.tile)
-        b.imageProduct.setImageResource(item.product.icon)
-        b.textStore.text = item.product.sellerName
-        b.textName.text = item.product.name
+        b.imageProduct.showProduct(b.frameThumb, item.thumbnail, item.categoryId)
+        b.textStore.text = item.sellerName
+        b.textName.text = item.name
         b.textVariant.text = item.variant
-        b.textPrice.text = Format.money(item.product.price * item.quantity)
+        b.textPrice.text = Format.money(item.lineTotal)
         b.stepper.textQuantity.text = item.quantity.toString()
 
+        // El cambio se guarda en Firestore y el listener del carrito repinta la lista.
         b.stepper.buttonMinus.setOnClickListener {
-            if (item.quantity > 1) {
-                item.quantity--
-                notifyItemChanged(holder.bindingAdapterPosition)
-                onQuantityChanged()
-            }
+            if (item.quantity > 1) onQuantityChanged(item, item.quantity - 1)
         }
         b.stepper.buttonPlus.setOnClickListener {
-            if (item.quantity < item.product.stock) {
-                item.quantity++
-                notifyItemChanged(holder.bindingAdapterPosition)
-                onQuantityChanged()
+            if (item.quantity < item.stock) {
+                onQuantityChanged(item, item.quantity + 1)
             } else {
-                b.root.snack(b.root.context.getString(R.string.cart_max_stock, item.product.stock))
+                b.root.snack(b.root.context.getString(R.string.cart_max_stock, item.stock))
             }
         }
         b.buttonDelete.setOnClickListener { onDelete(item) }

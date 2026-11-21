@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Identificadores de tags de vista usados por ImageView.showProduct(). -->
+<resources>
+    <item name="tag_original_icon" type="id" />
+    <item name="tag_original_tint" type="id" />
+</resources>

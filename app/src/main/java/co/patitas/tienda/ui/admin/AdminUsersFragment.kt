@@ -9,28 +9,34 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
 import co.patitas.tienda.data.Role
+import co.patitas.tienda.data.Session
 import co.patitas.tienda.data.User
+import co.patitas.tienda.data.UserRepository
 import co.patitas.tienda.data.UserStatus
 import co.patitas.tienda.databinding.DialogReasonBinding
 import co.patitas.tienda.databinding.FragmentAdminUsersBinding
+import co.patitas.tienda.util.errorMessage
 import co.patitas.tienda.util.snack
 import co.patitas.tienda.util.validate
 import co.patitas.tienda.util.value
 import co.patitas.tienda.util.visibleIf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 
 /**
- * Gestión de usuarios del Administrador (A-02 a A-04, RF-ADU-01 a 06):
- * listado con búsqueda y filtros, creación, edición, suspensión con motivo y eliminación.
+ * Gestión de usuarios del Administrador (A-02 a A-04, RF-ADU-01 a 06), CRUD sobre la
+ * colección "users" de Firestore: listado en tiempo real con búsqueda y filtros, creación,
+ * edición, verificación de vendedores, suspensión con motivo y eliminación.
  */
 class AdminUsersFragment : Fragment() {
 
     private var _binding: FragmentAdminUsersBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: UserAdapter
+    private var users: List<User> = emptyList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAdminUsersBinding.inflate(inflater, container, false)
@@ -50,16 +56,16 @@ class AdminUsersFragment : Fragment() {
         binding.empty.imageEmpty.setImageResource(R.drawable.ic_group)
         binding.empty.textEmptyTitle.setText(R.string.users_empty_title)
         binding.empty.textEmptyMessage.setText(R.string.users_empty_message)
-    }
 
-    override fun onResume() {
-        super.onResume()
-        refresh()
+        UserRepository.all().observe(viewLifecycleOwner) { list ->
+            users = list
+            refresh()
+        }
     }
 
     private fun refresh() {
         val query = binding.inputSearch.value
-        val list = PatitasRepository.users.filter { user ->
+        val list = users.filter { user ->
             when (binding.chipGroupRole.checkedChipId) {
                 R.id.chipRoleBuyer -> user.role == Role.BUYER
                 R.id.chipRoleSeller -> user.role == Role.SELLER
@@ -90,7 +96,7 @@ class AdminUsersFragment : Fragment() {
             else if (user.status == UserStatus.PENDING) R.string.action_verify
             else R.string.action_suspend
         )
-        val isMe = user.id == PatitasRepository.currentUser?.id
+        val isMe = user.id == Session.user?.id
         popup.menu.findItem(R.id.action_delete).isEnabled = !isMe
         popup.menu.findItem(R.id.action_toggle_suspend).isEnabled = !isMe
         popup.setOnMenuItemClickListener { item ->
@@ -108,10 +114,20 @@ class AdminUsersFragment : Fragment() {
         popup.show()
     }
 
-    private fun setStatus(user: User, status: UserStatus, messageRes: Int) {
-        user.status = status
-        refresh()
-        binding.root.snack(getString(messageRes, user.name))
+    private fun setStatus(user: User, status: UserStatus, messageRes: Int, reason: String = "") {
+        execute(getString(messageRes, user.name)) { UserRepository.setStatus(user, status, reason) }
+    }
+
+    /** Ejecuta la operación en Firestore; la lista se actualiza sola con el listener. */
+    private fun execute(message: String, block: suspend () -> Unit) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                block()
+                _binding?.root?.snack(message)
+            } catch (e: Exception) {
+                _binding?.root?.snack(requireContext().errorMessage(e))
+            }
+        }
     }
 
     /** Suspensión con motivo obligatorio que queda registrado en la auditoría (RF-ADU-04). */
@@ -130,7 +146,7 @@ class AdminUsersFragment : Fragment() {
                 return@setOnClickListener
             }
             alert.dismiss()
-            setStatus(user, UserStatus.SUSPENDED, R.string.user_suspended)
+            setStatus(user, UserStatus.SUSPENDED, R.string.user_suspended, dialog.inputReason.value)
         }
     }
 
@@ -140,9 +156,7 @@ class AdminUsersFragment : Fragment() {
             .setTitle(R.string.delete_user_title)
             .setMessage(getString(R.string.delete_user_message, user.name))
             .setPositiveButton(R.string.action_delete) { _, _ ->
-                PatitasRepository.deleteUser(user)
-                refresh()
-                binding.root.snack(getString(R.string.user_deleted, user.name))
+                execute(getString(R.string.user_deleted, user.name)) { UserRepository.delete(user) }
             }
             .setNegativeButton(R.string.action_cancel, null)
             .show()

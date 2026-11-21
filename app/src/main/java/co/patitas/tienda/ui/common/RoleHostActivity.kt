@@ -9,7 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.AuthRepository
+import co.patitas.tienda.data.Session
+import co.patitas.tienda.data.UserRepository
+import co.patitas.tienda.data.UserStatus
 import co.patitas.tienda.databinding.ActivityRoleHostBinding
 import co.patitas.tienda.databinding.NavHeaderBinding
 import co.patitas.tienda.ui.auth.WelcomeActivity
@@ -21,6 +24,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  *  - Bottom Navigation: cada pestaña reemplaza el Fragment del contenedor.
  *  - Drawer (NavigationView): accesos a las pestañas, ayuda, privacidad y cerrar sesión.
  * Cada rol (Comprador, Vendedor, Administrador) solo define sus menús y sus Fragments.
+ * Además escucha en tiempo real el perfil del usuario: si un administrador lo suspende o lo
+ * elimina mientras usa la app, se cierra la sesión.
  */
 abstract class RoleHostActivity : AppCompatActivity() {
 
@@ -75,6 +80,8 @@ abstract class RoleHostActivity : AppCompatActivity() {
             }
         })
 
+        watchOwnProfile()
+
         val initialTab = intent.getIntExtra(EXTRA_TAB, binding.bottomNav.menu.getItem(0).itemId)
         if (savedInstanceState == null) {
             // selectedItemId solo dispara el listener si cambia la pestaña; la primera se muestra a mano.
@@ -118,11 +125,40 @@ abstract class RoleHostActivity : AppCompatActivity() {
         }
     }
 
+    /** Observa el documento users/{uid}; cambios de rol o estado se aplican al instante. */
+    private fun watchOwnProfile() {
+        val uid = Session.user?.id ?: return
+        UserRepository.watch(uid).observe(this) { profile ->
+            when {
+                profile == null || profile.status == UserStatus.SUSPENDED -> forceLogout()
+                else -> {
+                    Session.update(profile)
+                    bindDrawerHeader()
+                }
+            }
+        }
+    }
+
+    private var forcedOut = false
+
+    private fun forceLogout() {
+        if (forcedOut || Session.user == null) return
+        forcedOut = true
+        AuthRepository.logout()
+        MaterialAlertDialogBuilder(this)
+            .setIcon(R.drawable.ic_block)
+            .setTitle(R.string.session_revoked_title)
+            .setMessage(R.string.session_revoked_message)
+            .setPositiveButton(R.string.action_understood) { _, _ -> goToWelcome() }
+            .setCancelable(false)
+            .show()
+    }
+
     private fun bindDrawerHeader() {
         val header = NavHeaderBinding.bind(binding.navView.getHeaderView(0))
-        val user = PatitasRepository.currentUser
+        val user = Session.user
         header.textInitials.text = user?.initials ?: "?"
-        header.textName.text = user?.storeName?.takeIf { it.isNotBlank() } ?: user?.name ?: getString(R.string.guest_name)
+        header.textName.text = user?.displayName ?: getString(R.string.guest_name)
         header.textEmail.text = user?.email ?: getString(R.string.guest_email)
         header.textRole.text = user?.role?.label ?: getString(R.string.guest_role)
         if (user == null) {
@@ -140,7 +176,7 @@ abstract class RoleHostActivity : AppCompatActivity() {
 
     /** Cerrar sesión con confirmación; lo usan el Drawer y el botón del perfil. */
     fun requestLogout() {
-        if (PatitasRepository.currentUser == null) {
+        if (Session.user == null) {
             goToWelcome()
             return
         }
@@ -148,7 +184,7 @@ abstract class RoleHostActivity : AppCompatActivity() {
             .setTitle(R.string.logout_title)
             .setMessage(R.string.logout_message)
             .setPositiveButton(R.string.drawer_logout) { _, _ ->
-                PatitasRepository.logout()
+                AuthRepository.logout()
                 goToWelcome()
             }
             .setNegativeButton(R.string.action_cancel, null)

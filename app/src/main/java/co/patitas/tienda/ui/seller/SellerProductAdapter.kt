@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.Catalog
 import co.patitas.tienda.data.Product
 import co.patitas.tienda.databinding.ItemSellerProductBinding
 import co.patitas.tienda.util.Format
 import co.patitas.tienda.util.applyStatus
+import co.patitas.tienda.util.showProduct
 
 /** Adaptador del CRUD de productos del Vendedor. El botón de menú abre las acciones. */
 class SellerProductAdapter(
@@ -37,12 +38,11 @@ class SellerProductAdapter(
         val product = items[position]
         val b = holder.binding
         val context = b.root.context
-        b.frameThumb.setBackgroundResource(product.tile)
-        b.imageProduct.setImageResource(product.icon)
+        b.imageProduct.showProduct(b.frameThumb, product.thumbnail, product.categoryId)
         b.textName.text = product.name
         b.textMeta.text = context.getString(
             R.string.seller_product_meta,
-            PatitasRepository.category(product.categoryId).name, product.species.label, product.presentation
+            Catalog.category(product.categoryId).name, product.species.label, product.presentation
         )
         b.textPrice.text = Format.money(product.price)
         b.textStock.text = context.resources.getQuantityString(R.plurals.stock_units, product.stock, product.stock)

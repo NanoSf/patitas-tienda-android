@@ -38,7 +38,7 @@ class OrderAdapter(
         val order = items[position]
         val b = holder.binding
         val context = b.root.context
-        b.textOrderId.text = context.getString(R.string.order_number, order.id)
+        b.textOrderId.text = context.getString(R.string.order_number, order.code)
         b.textStatus.applyStatus(order.status.style)
         b.textCounterpart.text = if (showBuyer) {
             context.getString(R.string.order_buyer, order.buyerName)
