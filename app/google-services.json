@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "598795461179",
+    "project_id": "patitas-tienda",
+    "storage_bucket": "patitas-tienda.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598795461179:android:29b7f749f87d7c1bebf21e",
+        "android_client_info": {
+          "package_name": "co.patitas.tienda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDJtjagTPOpn6_huCfIsfaLxYUjPkjHpk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
