@@ -14,11 +14,14 @@ class CategoryAdapter(
 
     class Holder(val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root)
 
+    /** Crea la vista de una fila a partir de su layout XML. */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         Holder(ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
+    /** Cantidad de filas que muestra la lista. */
     override fun getItemCount() = items.size
 
+    /** Pinta los datos del elemento en la fila (las filas se reutilizan al desplazarse). */
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val category = items[position]
         holder.binding.imageIcon.setImageResource(category.icon)

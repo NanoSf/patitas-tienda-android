@@ -12,6 +12,7 @@ class SellerHomeActivity : RoleHostActivity() {
     override val bottomMenu = R.menu.bottom_seller
     override val drawerMenu = R.menu.drawer_seller
 
+    /** Fragment que corresponde a cada pestaña del Bottom Navigation de este rol. */
     override fun fragmentFor(itemId: Int): Fragment? = when (itemId) {
         R.id.tab_seller_dashboard -> SellerDashboardFragment()
         R.id.tab_seller_products -> SellerProductsFragment()
@@ -20,6 +21,7 @@ class SellerHomeActivity : RoleHostActivity() {
         else -> null
     }
 
+    /** Opciones del menú lateral (Drawer) propias de este rol. */
     override fun onRoleDrawerItem(itemId: Int): Boolean {
         if (itemId == R.id.nav_new_product) {
             startActivity(Intent(this, ProductFormActivity::class.java))

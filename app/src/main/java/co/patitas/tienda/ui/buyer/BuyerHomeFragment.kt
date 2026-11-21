@@ -8,24 +8,31 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.Catalog
+import co.patitas.tienda.data.ProductRepository
+import co.patitas.tienda.data.Session
 import co.patitas.tienda.databinding.FragmentBuyerHomeBinding
 import co.patitas.tienda.ui.common.RoleHostActivity
 import co.patitas.tienda.util.snack
 
-/** Inicio del Comprador (C-01): banner, categorías y productos cercanos ordenados por distancia. */
+/**
+ * Inicio del Comprador (C-01): banner, categorías y los productos publicados más recientes,
+ * leídos de Firestore en tiempo real.
+ */
 class BuyerHomeFragment : Fragment() {
 
     private var _binding: FragmentBuyerHomeBinding? = null
     private val binding get() = _binding!!
 
+    /** Infla el layout del fragmento con ViewBinding. */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentBuyerHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    /** Configura la vista: adaptadores, eventos y observadores de Firestore. */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val user = PatitasRepository.currentUser
+        val user = Session.user
         binding.textGreeting.text = if (user != null) {
             getString(R.string.home_greeting, user.name.substringBefore(" "))
         } else {
@@ -37,7 +44,7 @@ class BuyerHomeFragment : Fragment() {
         binding.buttonSeeAll.setOnClickListener { host.selectTab(R.id.tab_catalog) }
         binding.banner.setOnClickListener { binding.root.snack(R.string.banner_snack) }
 
-        binding.recyclerCategories.adapter = CategoryAdapter(PatitasRepository.categories) { category ->
+        binding.recyclerCategories.adapter = CategoryAdapter(Catalog.categories) { category ->
             CatalogFragment.pendingCategoryId = category.id
             host.selectTab(R.id.tab_catalog)
         }
@@ -51,9 +58,12 @@ class BuyerHomeFragment : Fragment() {
         )
         binding.recyclerNearby.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerNearby.adapter = adapter
-        adapter.submit(PatitasRepository.catalog().take(6))
+        ProductRepository.catalog().observe(viewLifecycleOwner) { products ->
+            adapter.submit(products.take(6))
+        }
     }
 
+    /** Libera el binding cuando se destruye la vista para evitar fugas de memoria. */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

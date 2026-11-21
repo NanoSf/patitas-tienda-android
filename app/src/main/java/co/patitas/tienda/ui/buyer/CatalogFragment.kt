@@ -9,26 +9,35 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.Catalog
+import co.patitas.tienda.data.Product
+import co.patitas.tienda.data.ProductRepository
 import co.patitas.tienda.data.Species
 import co.patitas.tienda.databinding.FragmentCatalogBinding
 import co.patitas.tienda.util.snack
 import co.patitas.tienda.util.visibleIf
 import com.google.android.material.chip.Chip
 
-/** Catálogo con búsqueda por texto y filtros por especie y categoría (RF-INI-02, RF-INI-03). */
+/**
+ * Catálogo con búsqueda por texto y filtros por especie y categoría (RF-INI-02, RF-INI-03).
+ * Los productos publicados llegan de Firestore en tiempo real; los filtros se aplican en el
+ * teléfono sobre esa lista.
+ */
 class CatalogFragment : Fragment() {
 
     private var _binding: FragmentCatalogBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ProductGridAdapter
     private var selectedCategoryId: Int? = null
+    private var products: List<Product> = emptyList()
 
+    /** Infla el layout del fragmento con ViewBinding. */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCatalogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    /** Configura la vista: adaptadores, eventos y observadores de Firestore. */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         adapter = ProductGridAdapter(
             onClick = { product ->
@@ -43,7 +52,7 @@ class CatalogFragment : Fragment() {
         // Una Chip por categoría, creada en tiempo de ejecución con el estilo del tema (chipStyle).
         selectedCategoryId = pendingCategoryId
         pendingCategoryId = null
-        PatitasRepository.categories.forEach { category ->
+        Catalog.categories.forEach { category ->
             val chip = Chip(requireContext()).apply {
                 id = View.generateViewId()
                 text = category.name
@@ -64,9 +73,13 @@ class CatalogFragment : Fragment() {
         binding.empty.textEmptyTitle.setText(R.string.catalog_empty_title)
         binding.empty.textEmptyMessage.setText(R.string.catalog_empty_message)
         binding.empty.imageEmpty.setImageResource(R.drawable.ic_search)
-        refresh()
+        ProductRepository.catalog().observe(viewLifecycleOwner) { list ->
+            products = list
+            refresh()
+        }
     }
 
+    /** Aplica el filtro seleccionado a la lista y actualiza el contador y el estado vacío. */
     private fun refresh() {
         val species = when (binding.chipGroupSpecies.checkedChipId) {
             R.id.chipDog -> Species.DOG
@@ -74,12 +87,13 @@ class CatalogFragment : Fragment() {
             else -> null
         }
         val query = binding.inputSearch.editText?.text?.toString().orEmpty()
-        val results = PatitasRepository.catalog(query, selectedCategoryId, species)
+        val results = ProductRepository.filter(products, query, selectedCategoryId, species)
         adapter.submit(results)
         binding.textResults.text = resources.getQuantityString(R.plurals.catalog_results, results.size, results.size)
         binding.empty.root.visibleIf(results.isEmpty())
     }
 
+    /** Libera el binding cuando se destruye la vista para evitar fugas de memoria. */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

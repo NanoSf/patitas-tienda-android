@@ -7,9 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import co.patitas.tienda.R
+import co.patitas.tienda.data.Order
+import co.patitas.tienda.data.OrderRepository
 import co.patitas.tienda.data.OrderStatus
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.Product
+import co.patitas.tienda.data.ProductRepository
 import co.patitas.tienda.data.ProductStatus
+import co.patitas.tienda.data.Reports
+import co.patitas.tienda.data.Session
 import co.patitas.tienda.data.StatusStyle
 import co.patitas.tienda.databinding.FragmentSellerDashboardBinding
 import co.patitas.tienda.databinding.ViewStockRowBinding
@@ -18,17 +23,25 @@ import co.patitas.tienda.ui.common.RoleHostActivity
 import co.patitas.tienda.util.Format
 import co.patitas.tienda.util.applyStatus
 
-/** Panel del Vendedor (V-01): ventas, pedidos, productos activos, calificación y alertas. */
+/**
+ * Panel del Vendedor (V-01): ventas del mes, pedidos nuevos, productos activos, calificación
+ * y alertas de stock, calculados con los productos y pedidos reales de Firestore.
+ */
 class SellerDashboardFragment : Fragment() {
 
     private var _binding: FragmentSellerDashboardBinding? = null
     private val binding get() = _binding!!
+    private var products: List<Product> = emptyList()
+    private var orders: List<Order> = emptyList()
+    private lateinit var adapter: OrderAdapter
 
+    /** Infla el layout del fragmento con ViewBinding. */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSellerDashboardBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    /** Configura la vista: adaptadores, eventos y observadores de Firestore. */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.buttonNewProduct.setOnClickListener {
             startActivity(Intent(requireContext(), ProductFormActivity::class.java))
@@ -36,25 +49,33 @@ class SellerDashboardFragment : Fragment() {
         binding.buttonAllOrders.setOnClickListener {
             (requireActivity() as RoleHostActivity).selectTab(R.id.tab_seller_orders)
         }
-    }
+        adapter = OrderAdapter(showBuyer = true) {
+            (requireActivity() as RoleHostActivity).selectTab(R.id.tab_seller_orders)
+        }
+        binding.recyclerOrders.adapter = adapter
 
-    override fun onResume() {
-        super.onResume()
+        val uid = Session.user?.id.orEmpty()
+        ProductRepository.ofSeller(uid).observe(viewLifecycleOwner) { list ->
+            products = list
+            bind()
+        }
+        OrderRepository.ofSeller(uid).observe(viewLifecycleOwner) { list ->
+            orders = list
+            bind()
+        }
         bind()
     }
 
+    /** Pinta los indicadores y listas con los datos más recientes de Firestore. */
     private fun bind() {
-        val user = PatitasRepository.currentUser ?: return
-        val repo = PatitasRepository
+        val user = Session.user ?: return
         binding.textGreeting.text = getString(R.string.home_greeting, user.name.substringBefore(" "))
-        binding.textStore.text = getString(R.string.seller_store_status, user.storeName.ifBlank { user.name }, user.status.style.label)
+        binding.textStore.text = getString(R.string.seller_store_status, user.displayName, user.status.style.label)
 
-        val orders = repo.ordersOfSeller(user.id)
         val newOrders = orders.count { it.status == OrderStatus.NEW }
-        val products = repo.productsOfSeller(user.id)
 
         binding.kpiSales.imageKpiIcon.setImageResource(R.drawable.ic_trending_up)
-        binding.kpiSales.textKpiValue.text = Format.moneyShort(orders.filter { it.status != OrderStatus.CANCELLED }.sumOf { it.total })
+        binding.kpiSales.textKpiValue.text = Format.moneyShort(Reports.salesThisMonth(orders))
         binding.kpiSales.textKpiLabel.setText(R.string.kpi_sales_month)
 
         binding.kpiOrders.imageKpiIcon.setImageResource(R.drawable.ic_orders)
@@ -66,12 +87,13 @@ class SellerDashboardFragment : Fragment() {
         binding.kpiProducts.textKpiLabel.setText(R.string.kpi_active_products)
 
         binding.kpiRating.imageKpiIcon.setImageResource(R.drawable.ic_star)
-        binding.kpiRating.textKpiValue.text = Format.rating(4.8)
+        val rated = products.filter { it.reviews > 0 }
+        binding.kpiRating.textKpiValue.text = if (rated.isEmpty()) "—" else Format.rating(rated.map { it.rating }.average())
         binding.kpiRating.textKpiLabel.setText(R.string.kpi_rating)
 
         // Alertas: productos con 5 unidades o menos
         binding.containerStock.removeAllViews()
-        val low = products.filter { it.stock <= 5 }
+        val low = products.filter { it.stock <= 5 && it.status != ProductStatus.DRAFT }
         if (low.isEmpty()) {
             val row = ViewStockRowBinding.inflate(layoutInflater, binding.containerStock, true)
             row.imageIcon.setImageResource(R.drawable.ic_check_circle)
@@ -89,13 +111,10 @@ class SellerDashboardFragment : Fragment() {
             row.textValue.applyStatus(style)
         }
 
-        val adapter = OrderAdapter(showBuyer = true) {
-            (requireActivity() as RoleHostActivity).selectTab(R.id.tab_seller_orders)
-        }
-        binding.recyclerOrders.adapter = adapter
         adapter.submit(orders.filter { it.status == OrderStatus.NEW })
     }
 
+    /** Libera el binding cuando se destruye la vista para evitar fugas de memoria. */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
