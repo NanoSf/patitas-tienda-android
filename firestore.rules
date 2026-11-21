@@ -1,0 +1,98 @@
+rules_version = '2';
+
+// Reglas de seguridad de Cloud Firestore para Patitas.
+// Se publican en Firebase Console › Firestore Database › Reglas.
+//
+// Principios:
+//  - El rol y el estado de cada usuario viven en users/{uid}; las reglas los consultan.
+//  - Cada usuario solo lee y escribe lo suyo; el Administrador puede gestionar todo.
+//  - El catálogo publicado es público (lo pueden ver los invitados).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function profile() { return get(/databases/$(database)/documents/users/$(uid())).data; }
+    function hasProfile() { return signedIn() && exists(/databases/$(database)/documents/users/$(uid())); }
+    function active() { return hasProfile() && profile().status != 'SUSPENDED'; }
+    function isAdmin() { return hasProfile() && profile().role == 'ADMIN' && profile().status == 'ACTIVE'; }
+    function isSeller() { return active() && profile().role == 'SELLER'; }
+    function email() { return request.auth.token.email; }
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+
+    // ---------------------------------------------------------------- Usuarios
+    match /users/{userId} {
+      allow read: if signedIn() && (uid() == userId || isAdmin());
+
+      // Registro propio: comprador activo o vendedor por verificar.
+      // Las cuentas de demostración se crean activas (y la de administrador con su rol).
+      allow create: if isAdmin() || (
+        signedIn() && uid() == userId && request.resource.data.email == email() && (
+          (request.resource.data.role == 'BUYER' && request.resource.data.status == 'ACTIVE') ||
+          (request.resource.data.role == 'SELLER' && request.resource.data.status == 'PENDING') ||
+          (request.resource.data.role == 'SELLER' && email() == 'vendedor@patitas.co') ||
+          (request.resource.data.role == 'ADMIN' && email() == 'admin@patitas.co')
+        )
+      );
+
+      // Cada usuario solo edita su nombre y teléfono; el administrador edita todo.
+      allow update: if isAdmin() ||
+        (signedIn() && uid() == userId && changed().hasOnly(['name', 'phone', 'updatedAt']));
+
+      allow delete: if isAdmin() || (signedIn() && uid() == userId);
+    }
+
+    // --------------------------------------------------------------- Productos
+    match /products/{productId} {
+      allow read: if resource.data.status == 'PUBLISHED' ||
+        (signedIn() && (resource.data.sellerId == uid() || isAdmin()));
+
+      // El vendedor crea productos en borrador o en revisión (los aprueba el administrador).
+      allow create: if isSeller() && request.resource.data.sellerId == uid() && (
+        request.resource.data.status in ['DRAFT', 'IN_REVIEW'] || email() == 'vendedor@patitas.co'
+      );
+
+      allow update: if isAdmin()
+        // El vendedor edita sus productos, pero no puede publicarlos sin aprobación.
+        || (isSeller() && resource.data.sellerId == uid() && request.resource.data.sellerId == uid() && (
+              request.resource.data.status in ['DRAFT', 'IN_REVIEW', 'PAUSED', 'OUT_OF_STOCK'] ||
+              (request.resource.data.status == 'PUBLISHED' && resource.data.status in ['PUBLISHED', 'PAUSED', 'OUT_OF_STOCK'])
+           ))
+        // Al comprar, el comprador solo puede descontar stock (nunca aumentarlo ni dejarlo negativo).
+        || (active() && changed().hasOnly(['stock']) &&
+            request.resource.data.stock < resource.data.stock && request.resource.data.stock >= 0);
+
+      allow delete: if isAdmin() || (isSeller() && resource.data.sellerId == uid());
+    }
+
+    // Foto completa de cada producto (Base64). Lectura pública, escritura del dueño.
+    match /productImages/{productId} {
+      allow read: if true;
+      allow create, update: if isAdmin() || (isSeller() && request.resource.data.sellerId == uid());
+      allow delete: if isAdmin() || (isSeller() && resource.data.sellerId == uid());
+    }
+
+    // ---------------------------------------------------------------- Carritos
+    match /carts/{userId}/items/{itemId} {
+      allow read, write: if signedIn() && uid() == userId;
+    }
+
+    // ----------------------------------------------------------------- Pedidos
+    match /orders/{orderId} {
+      allow read: if signedIn() &&
+        (resource.data.buyerId == uid() || resource.data.sellerId == uid() || isAdmin());
+
+      // Solo el comprador crea sus pedidos, siempre en estado "Nuevo".
+      allow create: if active() && request.resource.data.buyerId == uid() && request.resource.data.status == 'NEW';
+
+      allow update: if isAdmin()
+        // El vendedor cambia el estado y el historial de sus pedidos.
+        || (signedIn() && resource.data.sellerId == uid() && changed().hasOnly(['status', 'updatedAt', 'history']))
+        // El comprador solo puede cancelar mientras el pedido sigue "Nuevo".
+        || (signedIn() && resource.data.buyerId == uid() && resource.data.status == 'NEW' &&
+            request.resource.data.status == 'CANCELLED' && changed().hasOnly(['status', 'updatedAt', 'history']));
+
+      allow delete: if isAdmin();
+    }
+  }
+}
