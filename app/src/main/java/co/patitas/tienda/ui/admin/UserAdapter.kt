@@ -20,6 +20,7 @@ class UserAdapter(
 
     private var items: List<User> = emptyList()
 
+    /** Reemplaza los elementos de la lista y la vuelve a pintar. */
     @SuppressLint("NotifyDataSetChanged")
     fun submit(list: List<User>) {
         items = list
@@ -28,11 +29,14 @@ class UserAdapter(
 
     class Holder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
 
+    /** Crea la vista de una fila a partir de su layout XML. */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         Holder(ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
+    /** Cantidad de filas que muestra la lista. */
     override fun getItemCount() = items.size
 
+    /** Pinta los datos del elemento en la fila (las filas se reutilizan al desplazarse). */
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val user = items[position]
         val b = holder.binding
@@ -45,6 +49,7 @@ class UserAdapter(
         b.buttonMore.setOnClickListener { onMore(user, it) }
     }
 
+    /** Colores del badge de cada rol. */
     private fun roleStyle(role: Role) = when (role) {
         Role.BUYER -> StatusStyle(role.label, R.color.buyer_primary, R.color.buyer_container)
         Role.SELLER -> StatusStyle(role.label, R.color.seller_primary, R.color.seller_container)

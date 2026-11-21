@@ -5,12 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import co.patitas.tienda.R
-import co.patitas.tienda.data.PatitasRepository
+import co.patitas.tienda.data.Catalog
 import co.patitas.tienda.data.Product
 import co.patitas.tienda.data.ProductStatus
 import co.patitas.tienda.databinding.ItemModerationBinding
 import co.patitas.tienda.util.Format
 import co.patitas.tienda.util.applyStatus
+import co.patitas.tienda.util.showProduct
 import co.patitas.tienda.util.visibleIf
 
 /**
@@ -19,11 +20,13 @@ import co.patitas.tienda.util.visibleIf
  */
 class ModerationAdapter(
     private val onApprove: (Product) -> Unit,
-    private val onReject: (Product) -> Unit
+    private val onReject: (Product) -> Unit,
+    private val onDelete: (Product) -> Unit
 ) : RecyclerView.Adapter<ModerationAdapter.Holder>() {
 
     private var items: List<Product> = emptyList()
 
+    /** Reemplaza los elementos de la lista y la vuelve a pintar. */
     @SuppressLint("NotifyDataSetChanged")
     fun submit(list: List<Product>) {
         items = list
@@ -32,18 +35,20 @@ class ModerationAdapter(
 
     class Holder(val binding: ItemModerationBinding) : RecyclerView.ViewHolder(binding.root)
 
+    /** Crea la vista de una fila a partir de su layout XML. */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         Holder(ItemModerationBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
+    /** Cantidad de filas que muestra la lista. */
     override fun getItemCount() = items.size
 
+    /** Pinta los datos del elemento en la fila (las filas se reutilizan al desplazarse). */
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val product = items[position]
         val b = holder.binding
         val context = b.root.context
-        val category = PatitasRepository.category(product.categoryId)
-        b.frameThumb.setBackgroundResource(product.tile)
-        b.imageProduct.setImageResource(product.icon)
+        val category = Catalog.category(product.categoryId)
+        b.imageProduct.showProduct(b.frameThumb, product.thumbnail, product.categoryId)
         b.textName.text = product.name
         b.textMeta.text = context.getString(R.string.moderation_meta, product.sellerName, category.name)
         b.textPrice.text = Format.money(product.price)
@@ -59,12 +64,21 @@ class ModerationAdapter(
         b.buttonReject.setText(if (published) R.string.action_unpublish else R.string.action_reject)
         b.buttonApprove.setOnClickListener { onApprove(product) }
         b.buttonReject.setOnClickListener { onReject(product) }
+        // Mantener presionada la tarjeta permite eliminar el producto (por ejemplo, contenido prohibido).
+        b.root.setOnLongClickListener {
+            onDelete(product)
+            true
+        }
     }
 
     /** Validaciones automáticas: fotos, precio de referencia, registro ICA y palabras prohibidas. */
     private fun checks(product: Product, requiresIca: Boolean, context: android.content.Context): String {
         val lines = mutableListOf<String>()
-        lines += context.getString(R.string.check_photos_ok)
+        lines += if (product.hasPhoto) context.getString(R.string.check_photos_ok)
+        else context.getString(R.string.check_photos_missing)
+        if (product.rejectionReason.isNotBlank()) {
+            lines += context.getString(R.string.check_reason, product.rejectionReason)
+        }
         lines += if (product.price in 5_000..2_000_000) context.getString(R.string.check_price_ok)
         else context.getString(R.string.check_price_warning)
         if (requiresIca) {

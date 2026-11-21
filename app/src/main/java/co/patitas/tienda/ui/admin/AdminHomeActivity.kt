@@ -11,6 +11,7 @@ class AdminHomeActivity : RoleHostActivity() {
     override val bottomMenu = R.menu.bottom_admin
     override val drawerMenu = R.menu.drawer_admin
 
+    /** Fragment que corresponde a cada pestaña del Bottom Navigation de este rol. */
     override fun fragmentFor(itemId: Int): Fragment? = when (itemId) {
         R.id.tab_admin_dashboard -> AdminDashboardFragment()
         R.id.tab_admin_users -> AdminUsersFragment()
@@ -19,6 +20,7 @@ class AdminHomeActivity : RoleHostActivity() {
         else -> null
     }
 
+    /** Opciones del menú lateral (Drawer) propias de este rol. */
     override fun onRoleDrawerItem(itemId: Int): Boolean {
         if (itemId == R.id.nav_new_user) {
             startActivity(Intent(this, UserFormActivity::class.java))
