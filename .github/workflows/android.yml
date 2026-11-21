@@ -1,10 +1,10 @@
-# Compila el APK en cada push a main, lo guarda como artefacto
-# y lo publica en la sección Releases del repositorio (v1.0.0).
+# Compila el APK en cada push. En la rama main además lo publica en Releases (v2.0.0).
+# Las llaves de ePayco (modo pruebas) se leen de los secretos del repositorio:
+#   Settings › Secrets and variables › Actions › EPAYCO_PUBLIC_KEY y EPAYCO_PRIVATE_KEY
 name: Android CI
 
 on:
   push:
-    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -26,22 +26,36 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Compilar APK (assembleDebug)
-        run: ./gradlew assembleDebug --stacktrace
+        env:
+          EPAYCO_PUBLIC_KEY: ${{ secrets.EPAYCO_PUBLIC_KEY }}
+          EPAYCO_PRIVATE_KEY: ${{ secrets.EPAYCO_PRIVATE_KEY }}
+        run: ./gradlew assembleDebug --stacktrace 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+
+      # Si falla, convierte los errores del compilador en anotaciones visibles en GitHub.
+      - name: Reportar errores de compilación
+        if: failure()
+        run: |
+          grep -E "^e: |error:|ERROR:|FAILURE|What went wrong" -A3 build.log | head -80 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done
 
       - name: Renombrar APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk Patitas_v1.0.0.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk Patitas_v2.0.0.apk
 
       - name: Publicar APK como artefacto
         uses: actions/upload-artifact@v4
         with:
           name: Patitas-apk
-          path: Patitas_v1.0.0.apk
+          path: Patitas_v2.0.0.apk
 
       - name: Publicar APK en Releases
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
-          name: Patitas v1.0.0 (Actividad 3 - interfaces gráficas)
-          body: APK de validación (debug) con las interfaces de los roles Comprador, Vendedor y Administrador. Cuentas de demostración en el README.
-          files: Patitas_v1.0.0.apk
+          tag_name: v2.0.0
+          name: Patitas v2.0.0 (entrega final - Firebase, ePayco y GPS)
+          body: |
+            APK funcional (debug) conectado a Firebase Authentication y Cloud Firestore, con pasarela ePayco en modo pruebas, geolocalización y carga de fotos desde cámara o galería.
+            Cuentas de demostración en el README.
+          files: Patitas_v2.0.0.apk
           make_latest: true
