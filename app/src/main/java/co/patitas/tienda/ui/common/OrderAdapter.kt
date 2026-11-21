@@ -21,6 +21,7 @@ class OrderAdapter(
 
     private var items: List<Order> = emptyList()
 
+    /** Reemplaza los elementos de la lista y la vuelve a pintar. */
     @SuppressLint("NotifyDataSetChanged")
     fun submit(list: List<Order>) {
         items = list
@@ -29,16 +30,19 @@ class OrderAdapter(
 
     class Holder(val binding: ItemOrderBinding) : RecyclerView.ViewHolder(binding.root)
 
+    /** Crea la vista de una fila a partir de su layout XML. */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         Holder(ItemOrderBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
+    /** Cantidad de filas que muestra la lista. */
     override fun getItemCount() = items.size
 
+    /** Pinta los datos del elemento en la fila (las filas se reutilizan al desplazarse). */
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val order = items[position]
         val b = holder.binding
         val context = b.root.context
-        b.textOrderId.text = context.getString(R.string.order_number, order.id)
+        b.textOrderId.text = context.getString(R.string.order_number, order.code)
         b.textStatus.applyStatus(order.status.style)
         b.textCounterpart.text = if (showBuyer) {
             context.getString(R.string.order_buyer, order.buyerName)
